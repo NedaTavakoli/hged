@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 #****************************************
 # To test the repository, use phoenix:
 
@@ -56,7 +55,7 @@ do
     #$bcftools view -H  $MyVariants | wc -l 
 
     # # count number of SNPs
-   if grep -q VT=SNP "$bcftools view -H  $MyVariants "; then print $2; fi
+   $bcftools view -H  $MyVariants | grep VT=SNP | wc -l
 
     # # count number of INDLEs
     $bcftools view -H  $MyVariants | grep VT=INDEL | wc -l
