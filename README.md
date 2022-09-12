@@ -29,5 +29,5 @@ chmod +x download_sw_dependencies.sh
 chmod +x vcf_extract_edit_distance.sh
 ./vcf_extract_edit_distance.sh
 
-
+# Note : git reset HEAD^ --hard
 
