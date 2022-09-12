@@ -18,15 +18,15 @@ To submit an interactive job:
 cd /storage/coda1/p-saluru8/0/ntavakoli6/hged
 
 # Download vcf files and Human referene genome
-chmod x+r download_vcf_and_ref.sh
+chmod +x download_vcf_and_ref.sh
 ./download_vcf_and_ref.sh
 
 # Download software dependencies
-chmod x+r download_sw_dependencies.sh
+chmod +x download_sw_dependencies.sh
 ./download_sw_dependencies.sh
 
 # Extract infotmation from vcf files and ref and construct edge-labled variation graph
-chmod x+r vcf_extract_edit_distance.sh
+chmod +x vcf_extract_edit_distance.sh
 ./vcf_extract_edit_distance.sh
 
 

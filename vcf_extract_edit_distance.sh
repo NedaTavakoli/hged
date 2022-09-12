@@ -89,16 +89,8 @@ done
 #* Compute statistics on the variant positions ( how far they are from each other)
 #***************************************************************************************************************************
 # Find average distance between values of a colomn 
-for id in $(seq 1 22; echo X; echo Y)
-do
-    variant_positions_snps_indels_chr${id}.txt
-
-
-
-
-
-done
-
+# run avg_distance_of_positions.ipynb
+#***************************************************************************************************************************
 
 
 
