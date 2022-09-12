@@ -1,0 +1,5 @@
+Observations
+
+1- Fatst file for ref contains N at the begining
+2- First variant postion is an INDEL that is located at the position 10117 from the chr1 of human genome 
+        1	10177	.	A	AC	INDEL
