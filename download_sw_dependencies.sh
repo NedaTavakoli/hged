@@ -59,6 +59,21 @@ tabix=$(pwd)
 rm -f "htslib-1.12.tar.bz2"
 echo "htslib download and compilation finished"
 
+#get samtools
+echo "downloading SAMtools"
+cd ${software_dir}
+wget https://github.com/samtools/samtools/releases/download/1.12/samtools-1.12.tar.bz2
+tar -xvf samtools-1.12.tar.bz2
+cd samtools-1.12
+autoheader            # Build config.h.in (this may generate a warning about # AC_CONFIG_SUBDIRS - please ignore it).
+autoconf -Wno-syntax  # Generate the configure script
+./configure   --prefix=$softwarewd/samtools-1.12        # Needed for choosing optional functionality
+make
+make install
+samtools=$(pwd)
+rm -f "samtools-1.12.tar.bz2"
+echo "samtools download and compilation finished"
+
 #get Gurobi
 echo "downloading gurobi"
 cd ${software_dir}

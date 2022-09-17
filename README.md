@@ -25,9 +25,20 @@ chmod +x download_vcf_and_ref.sh
 chmod +x download_sw_dependencies.sh
 ./download_sw_dependencies.sh
 
-# Extract infotmation from vcf files and ref and construct edge-labled variation graph
+# Extract infotmation from vcf files: variant positions for SNPs and INDELs
 chmod +x vcf_extract_edit_distance.sh
 ./vcf_extract_edit_distance.sh
 
 # Note : git reset HEAD^ --hard
 
+# get POS REF ALT per variant position (required to construct graph)
+chmod +x get_vcfinfo_of_snps_indels_pos_ref_alt.sh
+./get_vcfinfo_of_snps_indels_pos_ref_alt.sh
+ 
+# Construt edge-lable variation graph
+chmod vg_alter_paths.sh
+./vg_alter_paths.sh
+
+# get the substring of length alpha for haplotype h1/or h2 for a given sample
+chmod +x get_string_of_haplotype_from_bp_to_bp.sh
+./get_string_of_haplotype_from_bp_to_bp.sh
