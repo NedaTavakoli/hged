@@ -78,3 +78,9 @@ ref= hs37d5
 cat chr${id}_snps_indel_POS_REF_ALT.txt | head -1
 cat chr${id}_snps_indel_POS_REF_ALT.txt | tail -1
 $samtools faidx hs37d5.fa 22:16050075-51244237 
+
+# List of vertices
+v=($(seq 16050075 1 51244237))
+echo $v
+
+# List of edges
