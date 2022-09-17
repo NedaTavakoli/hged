@@ -44,8 +44,32 @@ cd ${DATA}
 
 id=22
 sample=HG00096
-ref= hs37d5  
+ref=hs37d5  
 
+#  Output: chr${id}_snps_indel_POS_REF_ALT.txt
+#*
+# * Construct POS REF ALT for variant positions of each chromosome
+# * This file is needed for the 
+# *
+for id in $(seq 1 22; echo X; echo Y)
+do
+    MyVariants=${DATA}/chr${id}.vcf.gz
+   
+    #  saving SNP postions to files
+    $bcftools view -H  $MyVariants | grep VT=SNP  | awk '{print $2"\t"$4"\t"$5}'  > t1_chr${id}.txt
+
+    
+    #  saving indel postions to files
+    $bcftools view -H  $MyVariants | grep VT=INDEL  |awk '{print $2"\t"$4"\t"$5}'  > t2_chr${id}.txt
+
+
+    sort -n t1_chr${id}.txt  t2_chr${id}.txt > chr${id}_snps_indel_POS_REF_ALT.txt
+
+done
+# sample output
+# # cat chr22_snps_indel_POS_REF_ALT.txt | head -1
+    # 16050075	A	G
+# **************************************************************************************
 # Input: chr22_snps_indel_POS_REF_ALT.txt
     # cat chr22_snps_indel_POS_REF_ALT.txt | head -10
     # 16050075	A	G
@@ -77,10 +101,12 @@ ref= hs37d5
 # ***************************************************************************************
 cat chr${id}_snps_indel_POS_REF_ALT.txt | head -1
 cat chr${id}_snps_indel_POS_REF_ALT.txt | tail -1
-$samtools faidx hs37d5.fa 22:16050075-51244237 
+$samtools faidx hs37d5.fa 22:16050075-51244237 > linear_bc_chr${id}.fa
 
+# 
 # List of vertices
-v=($(seq 16050075 1 51244237))
+v=($(seq 16050075 1 51244237)) 
 echo $v
 
 # List of edges
+# 
