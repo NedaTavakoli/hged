@@ -1,7 +1,7 @@
 # hged
-Haplotype_aware variation graphs_edit disatance
+# Haplotype_aware variation graphs_edit disatance
 
-# ------------------------------------------------------------------
+# -----------------------------------------
 To test the repository, use phoenix:
 
 Login to the cluster:
@@ -13,7 +13,7 @@ ssh ntavakoli6@login-phoenix-3.pace.gatech.edu
 To submit an interactive job:
 
  qsub -I -q inferno -A GT-saluru8-CODA20 -l nodes=1:ppn=24,mem=100gb,walltime=96:00:00
-# ------------------------------------------------------------------ 
+# -------------------------------------------
 The overall workflow is:
 
 ```sh
@@ -40,7 +40,6 @@ chmod +x ../4.vcf_of_snps_indels_POS_REF_ALT.sh
  # Construt edge-lable variation graph
 chmod +x ../6.vg_alter_paths.sh
 ../6.vg_alter_paths.sh
-
 # get the substring of length alpha for haplotype h1/or h2 for a given sample
 chmod +x ../7.get_string_of_haplotype_from_bp_to_bp.sh
 ./7.get_string_of_haplotype_from_bp_to_bp.sh
