@@ -41,7 +41,7 @@ tabix=${software_dir}/htslib-1.12/tabix
 samtools=${software_dir}/samtools-1.12/samtools
 bgzip=${software_dir}/htslib-1.12/bin/bgzip
 cd ${DATA}
-id=22
+id=1
 # ***************************************************************************************
 
 
@@ -89,10 +89,7 @@ Total_vertices=$(($num_vertice_linear_bc + $num_alt_vertices))
 echo ${Total_vertices}
 # 35893981 for chr22
 e=$(($start+ $Total_vertices))
-V=($(seq $start 1 $e)) # note, if you don't use the second paranthesis the result won't store in an array
-len=${#V[@]}
-echo $len
-printf "%s\n" "${V[@]}" > chr${id}_vertices.txt
+seq $start $e > chr${id}_vertices.txt
 
 #*****************************************************************
 #***** generate list of edges in the graph
@@ -103,18 +100,19 @@ printf "%s\n" "${V[@]}" > chr${id}_vertices.txt
 # indexing the linear backbonefile, to get the chracter string
 #for i in $(seq $start $end) # edges for the linear backbone
 end1=$(($end-$start+1))  # we need to index the linear bc to the length of the end1
+echo $end1
 index=${start}
-for i in $(seq 1 $end1) # edges for the linear backbone
+#for i in $(seq 1 $end1) # edges for the linear backbone
+
+
 #for i in $(seq 1 4) # edges for the linear backbone
+for ((i=1;i<=${end1};i++)); 
 do
     # get the character for that specific range
     label=$($samtools faidx linear_bc_chr${id}.fa  $id:$start-$end:$i-$(($i)) | tail -1)
-    edge=$(printf ' (%s,%s,%s)' $index $(($index+1)) $label; printf '\n') 
-    ((index=index+1))  # increament the index by 1
-
-    echo $edge 
-    #edge=$(printf ' (%s,%s,%s)' $i $(($i+1)) $label; printf '\n') > chr${id}_edges.txt
-done > chr${id}_edges1.txt
+    printf "($index,$(($index+1)),$label)" >> chr${id}_edges1.txt
+    ((index++))  # increament the index by 1
+done 
 
 
 #               *****************************************************************
@@ -131,13 +129,13 @@ variant_positions=($(cut -d ',' -f2 variant_positions_snps_indels_chr${id}.txt))
 # new edges are started from the last linear bc
 new_v=$(($num_vertice_linear_bc+1))
 echo $new_v
+# 35780756 for chr22
 
 for POS in "${variant_positions[@]}"
 do
-    POS=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | grep ${POS} | cut -f1)
-    REF=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | grep ${POS} | cut -f2)
-    ALT=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | grep ${POS} | cut -f3)
-
+    REF=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | awk -F " " -v m="$POS" '$1 == m{print $2}')
+    ALT=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | awk -F " " -v m="$POS" '$1 == m{print $3}')
+  
     ref_len=${#REF}
     # echo $ref_len
     end_POS_bc=$(($POS+$ref_len))
@@ -154,8 +152,7 @@ do
         if [ ${#element} -eq 1 ];
         then
         # echo "when ALT has only one character"
-        edge2=$(printf ' (%s,%s,%s)' $POS $end_POS_bc $element; printf '\n')
-        echo "$edge2" 
+        echo "($POS,$end_POS_bc,$element)" >> chr${id}_edges2.txt
         fi
 
         # when the length of ALT is >1
@@ -165,24 +162,24 @@ do
 
         for ((i=0; i<$((${#element}-1)); i++));
         do
-            echo "test"
+        
           
             arr[$i]="${element:$i:1}"
             label2=${arr[$i]}
 
-            edge2=$(printf ' (%s,%s,%s)' ${new_v} $(($new_v+1)) $label2; printf '\n') 
+            echo "(${new_v},$(($new_v+1)),$label2)" >> chr${id}_edges2.txt
             ((new_v=new_v+1))  # increament the vertex by 1
-            echo "$edge2"
+           
         done
        
         # "The last character of non-one element"
         label2=${arr[$((${#element}-1))]}
         # echo "The last character of non-one element"
-        edge2=$(printf ' (%s,%s,%s)' $new_v ${end_POS_bc} $label2; printf '\n') 
-        echo "$edge2"
+        echo "($new_v,${end_POS_bc},$label2)" >> chr${id}_edges2.txt
+        # echo "$edge2"
         fi
     done       
-done > chr${id}_edges2.txt
+done 
 
 # Combine two files together and keep them sorted
 
