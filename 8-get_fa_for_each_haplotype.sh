@@ -24,6 +24,7 @@
 
 # Change this line according to your projcet directory
 cd /storage/coda1/p-saluru8/0/ntavakoli6/hged
+ 
 #----------------------------------------------------------------
 
 project_dir=$(pwd)  #project top-level directory
@@ -33,36 +34,24 @@ DATA=$(pwd)
 
 cd ${project_dir}/software
 software_dir=$(pwd)
-|
+
 cd ${project_dir}
 bcftools=${software_dir}/bcftools-1.9/bcftools
 vcftools=${software_dir}/vcftools-0.1.16/bin/vcftools
 tabix=${software_dir}/htslib-1.12/tabix
+bgzip=${software_dir}/htslib-1.12/bgzip
 samtools=${software_dir}/samtools-1.12/samtools
+
 cd ${DATA}
 # ***************************************************************************************
 
-# id=22
-
-# Get the linear backbone for the genome graph for all choromosomes 
-# ***************************************************************************************
+# General version 
 for id in $(seq 1 22; echo X; echo Y)
 do
-    start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
-    end=$(cat variant_positions_snps_indels_chr${id}.txt | tail -1)
-    $samtools faidx hs37d5.fa ${id}:${start}-${end} > linear_bc_chr${id}.fa
+while read sample; do
+    $bcftools consensus -f ${ref}.fa -s ${sample} -H 1  chr_${id}_${sample}.vcf.gz > chr_${id}_${sample}_haplotype_1.fa
+    $bcftools consensus -f ${ref}.fa -s ${sample} -H 2 chr_${id}_${sample}.vcf.gz > chr_${id}_${sample}_haplotype_2.fa
+done < chr22_sample.txt 
 done
 
-# Sample output
-# cat linear_bc_chr22.fa | head -3
-# >22:16050075-51244237
-# AGTGGGCCTAAGTGCCTCCTCTCGGGACTGGTATGGGGACGGTCATGCAATCTGGACAAC
-# ATTCACCTTTAAAAGTTTATTGATCTTTTGTGACATGCACGTGGGTTCCCAGTAGCAAGA
-# 
 
-# ***************************************************************************************
-
-# Important note: to index the linear backbone, we can use the following command
-# # indexing the linear backbonefile
-#  $samtools faidx linear_bc_chr22.fa  22:16050075-51244237:1-20
-#     AGTGGGCCTAAGTGCCTCCT

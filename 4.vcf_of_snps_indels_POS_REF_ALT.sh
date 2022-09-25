@@ -59,3 +59,28 @@ do
 
 done
 
+# sample output
+# cat chr22_snps_indel_POS_REF_ALT.txt | head -10
+    # 16050075	A	G
+    # 16050115	G	A
+    # 16050213	C	T
+    # 16050319	C	T
+    # 16050527	C	A
+    # 16050568	C	A
+    # 16050607	G	A
+    # 16050627	G	T
+    # 16050646	G	T
+    # 16050655	G	A
+
+
+    # cat chr22_snps_indel_POS_REF_ALT.txt | tail -10
+    # 51241101	A	T
+    # 51241102	T	C
+    # 51241285	T	G
+    # 51241298	T	G
+    # 51241309	C	T
+    # 51241342	C	A
+    # 51241386	C	G
+    # 51244163	A	G
+    # 51244205	C	T
+    # 51244237	C	T

@@ -43,5 +43,8 @@ chmod +x ../6.vg_alter_paths.sh
 # get the substring of length alpha for haplotype h1/or h2 for a given sample
 chmod +x ../7.get_string_of_haplotype_from_bp_to_bp.sh
 ./7.get_string_of_haplotype_from_bp_to_bp.sh
+# OPTIONAL: Construct fasta file per each haplotype
+# chmod +x ../8.get_fa_for_each_haplotype.sh
+# ./8.get_fa_for_each_haplotype.sh
 ```
 

@@ -1,0 +1,57 @@
+1	1	.	TC	GGGG	100	PASS	AC=1;AF=0.000199681;AN=5008;NS=2504;DP=8012;EAS_AF=0;AMR_AF=0;AFR_AF=0;EUR_AF=0;SAS_AF=0.001;AA=.òòò;VT=INDEL	GT	0|1
+
+>22 dna:chromosome chromosome:dummy:22:1:51304566:1
+ATCA
+
+zcat B.vcf.gz | bgzip -c > B.new.vcf.gz && tabix -p B.new.vcf.gz
+
+
+
+id=22
+sample=HG00096
+ref=hs37d5 
+$samtools faidx ${ref}.fa 21:9412076-9412080 | $bcftools consensus -s ${sample} -H 1  chr${id}_${sample}.vcf.gz >  chr${id}_${sample}.fa
+
+
+chr22
+----------
+id=22
+$bcftools view -s ${sample} -Oz chr${id}.vcf.gz > chr${id}_${sample}.vcf.gz
+cat chr22_snps_indel_POS_REF_ALT.txt
+16577044	TG	AG,T
+
+
+$bcftools view -H chr22.vcf | grep 16577044
+
+$samtools faidx ${ref}.fa 22:16577044-16577050 | $bcftools consensus -s ${sample} -H 1  chr${id}_${sample}_.vcf.gz
+
+
+cat chr22_sample.txt | awk -F"\t" '{split($0, arr_sample, "\t"); \
+{for (i=1; i<=NF; i++) {printf arr_sample[i]"\n"} ; if (i==NF) {printf "\n"};}}'
+
+# Generate vcf tools for each sample of chromosome id
+cat chr22_sample.txt | awk -F"\t" '{split($0, arr_sample, "\t"); \
+{for (i=1; i<=NF; i++) {$bcftools view -s ${arr_sample[i]} -Oz chr${id}.vcf.gz > chr${id}_${arr_sample[i]}.vcf.gz}}'
+
+
+#__-------------------------------------------------
+# # I don't see the documentation indicating an answer
+# to my question. Can you make a dummy fasta file and vcf file to test?
+# Maybe have the entire reference in the fasta be ATCA. 
+#$Then have a haplotype be AGGGGA with VCF having variant 
+
+# POS:2   REF: TC   ALT: GGGG
+
+# I want to know what happens when you do bcf consensus 
+# for the haplotype between positions 2-3. 
+# Will it use the variant that starts at position 2?
+#  (I'm assuming everything is 1 indexed)
+
+# Dan
+$bcftools view -H B.new.vcf.gz | awk -F"\t" '{split($0, arr, "\t");\
+    {for (i=10; i<=NF; i++) {if (gsub(/0\|1/, "", $(i))==1) {printf i};\
+    if (i==NF) {printf "\n"}}}}'
+awk -v RS='\t' '/0|1/{print NR; exit}' B.new.vcf.gz 
+awk -F '\t' -v col='0|1' 'NR==1{for (i=1; i<=NF; i++) if ($i==col) {print i;exit}}' B.new.vcf.gz 
+
+$bcftools view -H B.new.vcf.gz | awk -F"\t" '{split($0, arr, "\t");}'

@@ -75,13 +75,15 @@ do
    
     #  saving SNP postions to files
     $bcftools view -H  $MyVariants | grep VT=SNP  | awk '{print $2}'  > snps_positions_chr${id}.txt
-
+    #or
+    # $bcftools view -H -v snps chr${id}.vcf.gz | awk '{print $2}' > snps_positions_chr${id}_nnn.txt
     
     #  saving indel postions to files
     $bcftools view -H  $MyVariants | grep VT=INDEL  | awk '{print $2}'  > indels_positions_chr${id}.txt
-
+    # $bcftools view -H -v indels chr${id}.vcf.gz | awk '{print $2}' > indels_positions_chr${id}_nnn.txt
 
     sort -n snps_positions_chr${id}.txt  indels_positions_chr${id}.txt > variant_positions_snps_indels_chr${id}.txt
+    #sort -n snps_positions_chr${id}_nnn.txt  indels_positions_chr${id}_nnn.txt > variant_positions_snps_indels_chr${id}_nnn.txt
 
 done
 #***************************************************************************************************************************
@@ -91,6 +93,19 @@ done
 # run avg_distance_of_positions.ipynb
 #***************************************************************************************************************************
 
+# sample output
+# id=22
+# cat variant_positions_snps_indels_chr${id}.txt | head -10
+# 16050075
+# 16050115
+# 16050213
+# 16050319
+# 16050527
+# 16050568
+# 16050607
+# 16050627
+# 16050646
+# 16050655
 
 
 

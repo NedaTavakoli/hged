@@ -61,40 +61,27 @@ $bcftools query -l chr${id}.vcf > chr${id}_samples.txt
     # HG00106
     # HG00107
 
-id=22
-sample=HG00096
-ref= hs37d5    
+#***************************************************************************************
+# Generate vcf files for each samples and chromosomes and index them
 #***************************************************************************************
 
-# 1: Generate vcf file for a given sample (haplotype), -oz is used to get gz format
+# for id in $(seq 1 22; echo X; echo Y)
+for id in {1,22}
+do
+    while read sample; do
+    echo "${sample}"
 
-$bcftools view -s ${sample} -Oz chr${id}.vcf.gz > chr${id}_${sample}.vcf.gz
+    # 1: Generate vcf file for a given sample (haplotype), -oz is used to get gz format
+    $bcftools view -s ${sample} -Oz chr${id}.vcf.gz > chr_${id}_${sample}.vcf.gz
+    echo "done vcf for $sample"
+
+    # 2. Index vcf file (required for bcftools consensus)
+    $bcftools index chr_${id}_${sample}.vcf.gz
+    done < chr22_sample.txt 
+done
 
 #***************************************************************************************
-
-# 2. Index vcf file (required for bcftools consensus)
-
-$bcftools index chr${id}_${sample}.vcf.gz
-#***************************************************************************************
-
-# 3. Convert vcf file to fasta, for a halplotype in a region
-
-    # Get the consensus for one region. The fasta header lines are then expected
-    # in the form ">chr:from-to".
-
-    # To get the range for variant positions: for example
-    # cat variant_positions_snps_indels_chr21.txt | head -10
-    # 9411239
-    # 9411245
-    # 9411264
-    # 9411267
-    # 9411302
-    # 9411313
-    # 9411332
-    # 9411347
-    # 9411356
-
-    # cat variant_positions_snps_indels_chr22.txt | head -10
+# cat variant_positions_snps_indels_chr22.txt | head -10
     # 16050075
     # 16050115
     # 16050213
@@ -106,10 +93,95 @@ $bcftools index chr${id}_${sample}.vcf.gz
     # 16050646
     # 16050655
 
-# Substring of lengh alpha for the first haplotype of the sample    
+id=22
+sample=HG00096
+ref=hs37d5 
+#***************************************************************************************
+# Get the substring of length alpha for the first haplotype of the sample
+#***************************************************************************************
+# Substring of lengh alpha for the first haplotype of the sample  
+
 $samtools faidx ${ref}.fa 21:9412076-9412080 | $bcftools consensus -s ${sample} -H 1  chr${id}_${sample}.vcf.gz >  chr${id}_${sample}.fa
 
 # Substring of lengh alpha for the second haplotype of the sample   
 $samtools faidx hs37d5.fa 21:9412076-9412080 | $bcftools consensus -s ${sample} -H 2 chr${id}_${sample}.vcf.gz >  chr${id}_${sample}.fa 
+
+
+#-----------------------------------------------------
+
+id=22
+# Get the variant positions from the file 
+while read column
+do 
+echo "$column"
+done< file.txt
+
+# Get the variabt positions from the text file and store them into an array 
+#   Input: variant_positions_snps_indels_chr${id}.txt
+#   output: array variant_positions
+variant_positions=($(cut -d ',' -f2 variant_positions_snps_indels_chr${id}.txt))
+# printf "%s\n" "${variant_positions[0]}"
+
+#**************************************************
+
+
+
+v=16577044
+alpha=150
+id=22
+sample=HG00096
+ref=hs37d5 
+
+
+for alpha in {150, 1000, 5000, 50000}
+do
+    for id in {1,22}    # for each chromosome
+    do
+        # For each variant position 
+        for v in "${variant_positions[@]}"
+        do
+            echo ${v}
+            while read sample; 
+            do
+                echo "${sample}"
+
+                # Check if we can ignore haplotypes, if GT=0, we can ignore haplotypes for that position
+           
+                # Get GT field for the sample     
+                GT=$($bcftools view -H chr_${id}_${sample}.vcf.gz | grep ${v}| cut -f 10)
+                echo ${GT}
+
+                # only get the information for the first haplotype
+                h1=${GT:0:1}
+
+                # only get the information for the second haplotype
+                h2=${GT:2:3}
+
+                # Possible GT values: 0|0, 0|1, 0|2, 0|3, 1|0, 1|1, 1|2, 1|3, 2|0, 2|1, 2|2, 2|3, 3|0, 3|1, 3|2, 3|3
+
+                # if GT field for the haplotype is not zero
+              
+                if [ ${h1} -ne 0 ]; then
+                    # Substring of lengh alpha for the first haplotype of the sample 
+                    # $samtools faidx ${ref}.fa 22:16577044-16577050 | $bcftools consensus -s ${sample} -H 1  chr_${id}_${sample}.vcf.gz
+                    $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1  chr_${id}_${sample}.vcf.gz
+                fi
+
+                if [ ${h2} -ne 0 ]; then
+                    # Substring of lengh alpha for the second haplotype of the sample   
+                    # $samtools faidx hs37d5.fa 21:9412076-9412080 | $bcftools consensus -s ${sample} -H 2 chr${id}_${sample}.vcf.gz >  chr${id}_${sample}.fa 
+                    $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 2 chr_${id}_${sample}.vcf.gz
+                fi
+                echo "done consenses for $sample"
+            done < chr22_sample.txt 
+        done
+    done
+done
+
+
+
+
+
+
 
 
