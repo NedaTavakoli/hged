@@ -38,6 +38,11 @@ end=$(cat variant_positions_snps_indels_chr${id}.txt | tail -1)
 $samtools faidx hs37d5.fa ${id}:${start}-${end} > linear_bc_chr${id}.fa
 # ***************************************************************************************
 
+# get linar bc within the range
+# ***************************************************************************************
+$samtools faidx linear_bc_chr${id}.fa ${id}:${start}-${end} > linear_bc_chr${id}_in_variant_range.fa 
+# ***************************************************************************************
+
 
 #    Get the list of vertices
 # ***************************************************************************************
