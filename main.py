@@ -3,6 +3,7 @@ import gurobipy as gp
 from gurobipy import *
 import bisect
 import subprocess
+import sys
 
 
 class Graph:
@@ -275,12 +276,10 @@ def add_component_to_E(E):
 
 
 # checks whether sample has variant at position pos
-def variant_at_pos(pos, id, sample):
-
-    vcf_file_name = 'chr_' + id + '_' + sample + '.vcf.gz'
+def variant_at_pos(pos, vcf_file_name, sample):
 
     # GT=$($bcftools view -H chr_${id}_${sample}.vcf.gz | grep ${v}| cut -f 10)
-    p1 = subprocess.Popen(['bcftools', 'view', '-H', vcf_file_name], stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(['bcftools', 'view', '-H', vcf_file_name, '-s', sample], stdout=subprocess.PIPE)
     p2 = subprocess.Popen(['grep', pos], stdin=p1.stdout, stdout=subprocess.PIPE)
     p3 = subprocess.Popen(['cut', '-f', '10'], stdin=p2.stdout, stdout=subprocess.PIPE)
     p1.stdout.close()
@@ -296,18 +295,16 @@ def variant_at_pos(pos, id, sample):
 
 # takes coordinate pos,  haplotype sample, length alpha, reference file name, reference id, length of reference
 # returns substring from haplotype or empty string
-def extract_substring(pos, sample, alpha, ref, id, ref_len):
+def extract_substring(pos, sample, alpha, ref_file_name, vcf_file_name, ref_len):
 
-    if not variant_at_pos(pos, id, sample):
+    if not variant_at_pos(pos, vcf_file_name, sample):
         return ''
     else:
-        vcf_file = 'chr_' + id + '_' + sample + '.vcf.gz'
-        ref_file = ref + '.fa'
 
         # $samtools faidx ${ref}.fa 21:9412076-9412080 | $bcftools consensus -s ${sample} -H 1  chr${id}_${sample}.vcf.gz >  chr${id}_${sample}.fa
         end_coordinate = str(min(int(pos) + alpha, ref_len))
-        p1 = subprocess.Popen(['samtools', 'faidx', ref_file, id + ':' + pos + '-' + end_coordinate], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(['bcftools', 'consensus', '-s', sample, 'H', '1', vcf_file],
+        p1 = subprocess.Popen(['samtools', 'faidx', ref_file_name, id + ':' + pos + '-' + end_coordinate], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(['bcftools', 'consensus', '-s', sample, '-H', '1', vcf_file_name],
                               stdin=p1.stdout, stdout=subprocess.PIPE)
         p1.stdout.close()
         output, err = p2.communicate()
@@ -315,16 +312,17 @@ def extract_substring(pos, sample, alpha, ref, id, ref_len):
 
 
 # Takes graph G, location of variants L, alpha, delta, list of samples
-def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref, id, ref_len):
+def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref, vcf_file, ref_len):
 
     model = gp.Model()
+    # add global variables
     global_var = model.addVars(range(1, number_variants+1), vtype=GRB.BINARY)
     index_offset = num_variants
 
     # add sub-ILPs for each variant position
     for pos in L:
         for sample in samples:
-            S = extract_substring(pos, sample, alpha, ref, id, ref_len)
+            S = extract_substring(pos, sample, alpha, ref, vcf_file, ref_len)
             if S != '':
                 G_ind = reachable_subgraph(G, pos, alpha + delta)
                 G_a = create_alignment_graph(G_ind, S)
@@ -342,36 +340,75 @@ def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref, id, ref
     return model
 
 
+def load_data(graph_file_name, variant_location_file_name, samples_file_name):
+
+    # load graph vertices and edges
+    graph_file = open(graph_file_name, 'r')
+    num_vertices = int(graph_file.readline())
+    num_edges = int(graph_file.readline())
+
+    V = []
+    E = []
+    for _ in range(num_vertices):
+        V.append(graph_file.readline().strip())
+    for _ in range(num_edges):
+        e = graph_file.readline().split()
+        E.append((e[0], e[1], e[2], e[3]))
+    graph_file.close()
+
+    # load variant locations
+    variant_location_file = open(variant_location_file_name, 'r')
+    L = []
+    for l in variant_location_file:
+        L.append(l.strip())
+    variant_location_file.close()
+
+    # load samples
+    samples_file = open(samples_file_name, 'r')
+    samples = []
+    for s in samples_file:
+        samples.append(s.strip())
+    samples_file.close()
+
+    # extract number of variants
+    num_variants = len(set([e[3] for e in E if e[3] != '-']))
+
+    # extract length of linear backbone
+    ref_len = len([e for e in E if e[3] == '-'])
+
+    return V, E, L, samples, num_variants, ref_len
+
+
 if __name__ == "__main__":
 
-    # vertices
-    V = ['123', '124', '125', '126', '200']
+    # arguments: graph_file, variant_locations_file, samples_file, fasta_ref_file, vcf_file, alpha, delta
+    graph_file_name = sys.argv[1]
+    variant_location_file_name = sys.argv[2]
+    samples_file_name = sys.argv[3]
+    ref_file_name = sys.argv[4]
+    vcf_file_name = sys.argv[5]
+    alpha = int(sys.argv[6])
+    delta = int(sys.argv[7])
 
-    # edges, format: (start vertex, end vertex, symbol, variant #)
-    E = [('123', '124', 'A', '-'), ('124', '125', 'T', '-'), ('123', '124', 'T', '1'), \
-         ('123', '200', 'C', '2'), ('200', '125', 'G', '2'), ('125', '126', 'T', '-'), \
-         ('125', '126', 'A', '3'), ('124', '126', 'T', '4')]
+    V, E, L, samples, num_variants, ref_len = load_data(graph_file_name, variant_location_file_name, samples_file_name)
 
-    # variant positions
-    L = ['123', '124', '125']
+    # # vertices
+    # V = ['123', '124', '125', '126', '200']
+    #
+    # # edges, format: (start vertex, end vertex, symbol, variant #)
+    # E = [('123', '124', 'A', '-'), ('124', '125', 'T', '-'), ('123', '124', 'T', '1'), \
+    #      ('123', '200', 'C', '2'), ('200', '125', 'G', '2'), ('125', '126', 'T', '-'), \
+    #      ('125', '126', 'A', '3'), ('124', '126', 'T', '4')]
+    #
+    # # variant positions
+    # L = ['123', '124', '125']
+    #
+    # samples = ['HG00096']
 
-    samples = ['HG00096']
-    ref = 'hs37d5'
-    id = '22'
-    ref_len = 3
-    num_variants = 4
-    delta = 2
-    alpha = 1
-
-    # Program also assumes that vcf.gz files have been created for each sample in working directory
-    # file name: chr_<id>_<sample>.vcf.gz
-
-    # and reference file in working directory
-    # file name: ref.fa
-
-    # Need extra component in the edges for later ILP use
+    # Adds extra component in the edges for later ILP use
     # format: (start vertex, end vertex, symbol, variant #, ILP variable index)
     E = add_component_to_E(E)
+
     G = Graph(V, E)
-    model = create_global_ILP(G, L, alpha, delta, num_variants, samples, ref, id, ref_len)
+    model = create_global_ILP(G, L, alpha, delta, num_variants, samples, ref_file_name, vcf_file_name, ref_len)
     print(model.display())
