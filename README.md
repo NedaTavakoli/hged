@@ -49,7 +49,13 @@ chmod +x ../7.get_string_of_haplotype_from_bp_to_bp.sh
 ```
 
 List of vertices
+
 List of edges (start, end, symbol, variant number)
+
 List of variant positions
-Number of variants: chr22: 1102765 , chr1: 6463830
+
+Number of variants: 
+    chr22: 1102765  
+    chr1: 6463830
+
 Number of haplotypes: 5008
