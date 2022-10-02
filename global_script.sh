@@ -76,3 +76,19 @@ echo 'Number of haplotypes:'$num_haplotypes
 # after running the following python file
 # python 7.1.vg.edges.py
 cat chr${id}_edges.txt chr${id}_edges_2.txt | sort > chr${id}_vg_edges.txt
+
+
+#***************************************************************************************
+# Generate vcf files for each samples and chromosomes and index them
+#***************************************************************************************
+while read sample; do
+echo "${sample}"
+
+# 1: Generate vcf file for a given sample (haplotype), -oz is used to get gz format
+$bcftools view -s ${sample} -Oz chr${id}.vcf.gz > chr_${id}_${sample}.vcf.gz
+echo "done vcf for $sample"
+
+# 2. Index vcf file (required for bcftools consensus)
+$bcftools index chr_${id}_${sample}.vcf.gz
+done < chr22_sample.txt 
+#***************************************************************************************
