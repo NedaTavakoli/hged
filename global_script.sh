@@ -31,6 +31,14 @@ Num_variant=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | wc -l)
 print("Number of variant position is:",Num_variant)
 # ***************************************************************************************
 
+# get linar bc
+# ***************************************************************************************
+start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
+end=$(cat variant_positions_snps_indels_chr${id}.txt | tail -1)
+$samtools faidx hs37d5.fa ${id}:${start}-${end} > linear_bc_chr${id}.fa
+# ***************************************************************************************
+
+
 #    Get the list of vertices
 # ***************************************************************************************
 start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
