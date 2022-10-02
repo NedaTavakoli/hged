@@ -3,6 +3,7 @@
 id=22
 # change this according to your project directory
 bcftools=${software_dir}/bcftools-1.9/bcftools
+samtools=${software_dir}/samtools-1.12/samtools
 # ***************************************************************************************
 
 # inputs
