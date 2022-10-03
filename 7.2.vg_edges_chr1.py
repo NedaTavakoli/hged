@@ -22,7 +22,7 @@ with open('variant_positions_snps_indels_chr1.txt', 'r') as f:
     variant_positions = [line.rstrip() for line in f]
 
 # Create variant position dictionary
-variant_positions_dic = {k: v+1 for v, k in enumerate(variant_positions)}    
+variant_positions_index = {k: v+1 for v, k in enumerate(variant_positions)}    
 
 
 with open('chr1_snps_indel_POS_REF_ALT.txt', 'r') as f:
@@ -53,14 +53,12 @@ for label in lines:
    if label !='\n':
       label_list_bc.append(label)
 
-with open('chr1_edges.txt', 'w') as f:
+with open('n_chr1_edges.txt', 'w') as f:
     for i in range(0, end1):
         label = label_list_bc[i]
-
         # get the variant index if it exists
-        if  variant_positions_dic.__contains__(str(index)) ==1:
-
-            variant_index = variant_positions_dic[str(index)]
+        if  variant_positions_index.__contains__(str(index)) ==1:
+            variant_index = variant_positions_index[str(index)]
             edge = (str(index), str(index+1), label, variant_index)
         else: # position is not a variant position
             edge = (str(index), str(index+1), label, '-')
@@ -70,36 +68,31 @@ with open('chr1_edges.txt', 'w') as f:
 
 # Add edges accociated with alternate paths
 new_v = num_vertice_linear_bc +1
-
-with open('chr1_edges_2.txt', 'w') as f:
+with open('n_chr1_edges_2.txt', 'w') as f:
     for pos in variant_positions:
         REF = vcf_data_dic[pos][0][0]
         ALT = vcf_data_dic[pos][0][1]
-        variant_index = [i+1 for i, t in enumerate(vcf_data_list) if t[0]== pos]
-
+        variant_index = variant_positions_index[str(pos)]
         ref_len= int(len(str(REF)))
         end_POS_bc= ref_len + int(pos)
-
         # write outputs to file
         if(int(len(str(ALT))) ==1):
-            edge = (str(pos), str(end_POS_bc), ALT, variant_index[0])
+            edge = (str(pos), str(end_POS_bc), ALT, variant_index)
             f.write(f"{edge}\n")
-
         if(int(len(str(ALT))) !=1):
             ALT_elements = ALT.split(",")
             for element in ALT_elements:
-
                 if(int(len(str(element)))==1):
-                    edge = (str(pos), str(end_POS_bc), element, variant_index[0])
+                    edge = (str(pos), str(end_POS_bc), element, variant_index)
                     f.write(f"{edge}\n")
                 else:
                     v = pos  
                     for i, char in enumerate(element.rstrip()):
                         if(i != len(element)-1):
-                            edge = (str(v), str(new_v), char, variant_index[0])
+                            edge = (str(v), str(new_v), char, variant_index)
                             v = new_v
                             new_v +=1
                             f.write(f"{edge}\n")
                         else:  # the last element
-                            edge = (str(new_v), str(end_POS_bc), char, variant_index[0])
+                            edge = (str(new_v), str(end_POS_bc), char, variant_index)
                             f.write(f"{edge}\n")
