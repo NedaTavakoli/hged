@@ -325,7 +325,7 @@ def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref_file, vc
 
     # add sub-ILPs for each variant position
     for count, pos in enumerate(L):
-        print('Adding sub ILP for position '+count+' out of '+len(L))
+        print('Adding sub ILP for position '+str(count)+' out of '+str(len(L)))
         for sample in samples:
             for GT in {'1', '2'}:
                 S = extract_substring(pos, sample, alpha, ref_file, vcf_file, ref_len, GT, chrom)
@@ -419,5 +419,8 @@ if __name__ == "__main__":
 # module load anaconda3 gurobi
 # export PYTHONPATH=$GUROBI_HOME/lib/python3.8_utf32:$PYTHONPATH
 
-# python main.py chr22_vertices.txt chr22_vg_edges.txt variant_positions_snps_indels_chr22.txt \
+#  python main.py chr22_vertices.txt chr22_vg_edges.txt variant_positions_snps_indels_chr22.txt \
 #     chr22_sample.txt hs37d5.fa chr22.vcf.gz 22 3 1
+
+# edges for chr22 is: 36361078
+
