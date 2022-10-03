@@ -279,7 +279,7 @@ def add_component_to_E(E):
 def variant_at_pos(pos, vcf_file_name, sample, GT, chrom):
 
     # GT=$($bcftools view -H chr_${id}_${sample}.vcf.gz | grep ${v}| cut -f 10)
-    p1 = subprocess.Popen(['bcftools', 'view', '-H', '-s', sample, '-r', chrom+':'+pos, vcf_file_name], stdout=subprocess.PIPE)
+    p1 = subprocess.Popen(['$bcftools', 'view', '-H', '-s', sample, '-r', chrom+':'+pos, vcf_file_name], stdout=subprocess.PIPE)
     p2 = subprocess.Popen(['cut', '-f', '10'], stdin=p1.stdout, stdout=subprocess.PIPE)
     p1.stdout.close()
     gt_info = p2.communicate()
@@ -306,8 +306,8 @@ def extract_substring(pos, sample, alpha, ref_file_name, vcf_file_name, ref_len,
         # $samtools faidx ${ref}.fa 21:9412076-9412080 |
         # $bcftools consensus -s ${sample} -H 1  chr${id}_${sample}.vcf.gz
         end_coordinate = str(min(int(pos) + alpha - 1, ref_len))
-        p1 = subprocess.Popen(['samtools', 'faidx', ref_file_name, chrom + ':' + pos + '-' + end_coordinate], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(['bcftools', 'consensus', '-s', sample, '-H', GT, vcf_file_name],
+        p1 = subprocess.Popen(['$samtools', 'faidx', ref_file_name, chrom + ':' + pos + '-' + end_coordinate], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(['$bcftools', 'consensus', '-s', sample, '-H', GT, vcf_file_name],
                               stdin=p1.stdout, stdout=subprocess.PIPE)
         p1.stdout.close()
         output, err = p2.communicate()
