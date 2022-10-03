@@ -324,7 +324,8 @@ def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref_file, vc
     index_offset = num_variants
 
     # add sub-ILPs for each variant position
-    for pos in L:
+    for count, pos in enumerate(L):
+        print('Adding sub ILP for position '+count+' out of '+len(L))
         for sample in samples:
             for GT in {'1', '2'}:
                 S = extract_substring(pos, sample, alpha, ref_file, vcf_file, ref_len, GT, chrom)
@@ -334,6 +335,7 @@ def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref_file, vc
                     G_a_pruned = prune_alignment_graph(G_a, delta)
                     model = create_sub_ILP(model, G_a_pruned, delta, index_offset, global_var)
                     index_offset += len(G_a_pruned.get_E())
+
 
     # add global objective
     obj = gp.LinExpr(0)
@@ -397,16 +399,25 @@ if __name__ == "__main__":
     alpha = int(sys.argv[8])
     delta = int(sys.argv[9])
 
+    print('Loading data')
     V, E, L, samples, num_variants, ref_len = load_data(vertex_file_name, edges_file_name, variant_location_file_name,
                                                         samples_file_name)
 
     # Adds extra component in the edges for later ILP use
     # format: (start vertex, end vertex, symbol, variant #, ILP variable index)
+    print('Adding component to edges')
     E = add_component_to_E(E)
 
     G = Graph(V, E)
+    print('Creating global ILP')
     model = create_global_ILP(G, L, alpha, delta, num_variants, samples, ref_file_name, vcf_file_name, ref_len, chrom)
     print(model.display())
 
     model.optimize()
     print(model.X)
+
+# module load anaconda3 gurobi
+# export PYTHONPATH=$GUROBI_HOME/lib/python3.8_utf32:$PYTHONPATH
+
+# python main.py chr22_vertices.txt chr22_vg_edges.txt variant_positions_snps_indels_chr22.txt \
+#     chr22_sample.txt hs37d5.fa chr22.vcf.gz 22 3 1
