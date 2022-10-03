@@ -150,7 +150,8 @@ do
                 # Check if we can ignore haplotypes, if GT=0, we can ignore haplotypes for that position
            
                 # Get GT field for the sample     
-                GT=$($bcftools view -H chr_${id}_${sample}.vcf.gz | grep ${v}| cut -f 10)
+                #GT=$($bcftools view -H chr_${id}_${sample}.vcf.gz | grep ${v}| cut -f 10)
+                GT=$($bcftools query -s $sample -Hf '[%POS %GT]\n' chr22.vcf.gz | grep ${v} | awk -F ' ' '{print $2}')
                 echo ${GT}
 
                 # only get the information for the first haplotype
@@ -166,13 +167,15 @@ do
                 if [ ${h1} -ne 0 ]; then
                     # Substring of lengh alpha for the first haplotype of the sample 
                     # $samtools faidx ${ref}.fa 22:16577044-16577050 | $bcftools consensus -s ${sample} -H 1  chr_${id}_${sample}.vcf.gz
-                    $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1  chr_${id}_${sample}.vcf.gz
+                    # $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1  chr_${id}_${sample}.vcf.gz
+                    $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1  chr${id}.vcf.gz
                 fi
 
                 if [ ${h2} -ne 0 ]; then
                     # Substring of lengh alpha for the second haplotype of the sample   
                     # $samtools faidx hs37d5.fa 21:9412076-9412080 | $bcftools consensus -s ${sample} -H 2 chr${id}_${sample}.vcf.gz >  chr${id}_${sample}.fa 
-                    $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 2 chr_${id}_${sample}.vcf.gz
+                    # $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 2 chr_${id}_${sample}.vcf.gz
+                    $samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1  chr${id}.vcf.gz
                 fi
                 echo "done consenses for $sample"
             done < chr22_sample.txt 
