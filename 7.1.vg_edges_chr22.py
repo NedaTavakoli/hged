@@ -59,23 +59,23 @@ with open('linear_bc_chr22_in_variant_range.fa', 'r') as f:
 
 # Add edges: linear backbone
 index = start
-with open('n_chr22_edges.txt', 'w') as f:
+with open('chr22_edges.txt', 'w') as f:
     for i in range(0, end1):
         label = label_list_bc[i]
         # get the variant index if it exists
         if  variant_positions_index.__contains__(str(index)) ==1:
             variant_index = variant_positions_index[str(index)]
-            edge = (str(index), str(index+1), label, variant_index)
+            edge = (str(index), str(index+1), label, str(variant_index))
         else: # position is not a variant position
             edge = (str(index), str(index+1), label, '-')
         index +=1
-        f.write(f"{edge}\n")
+        f.write(edge[0]+' '+edge[1]+' '+edge[2]+' '+edge[3]+'\n')
 
 
 # Add edges accociated with alternate paths
 new_v = num_vertice_linear_bc +1
 
-with open('n_chr22_edges_2.txt', 'w') as f:
+with open('chr22_edges_2.txt', 'w') as f:
     for pos in variant_positions:
         REF = vcf_data_dic[pos][0][0]
         ALT = vcf_data_dic[pos][0][1]
@@ -85,25 +85,25 @@ with open('n_chr22_edges_2.txt', 'w') as f:
         end_POS_bc= ref_len + int(pos)
         # write outputs to file
         if(int(len(str(ALT))) ==1):
-            edge = (str(pos), str(end_POS_bc), ALT, variant_index)
-            f.write(f"{edge}\n")
+            edge = (str(pos), str(end_POS_bc), ALT, str(variant_index))
+            f.write(edge[0]+' '+edge[1]+' '+edge[2]+' '+edge[3]+'\n')
         if(int(len(str(ALT))) !=1):
             ALT_elements = ALT.split(",")
             for element in ALT_elements:
                 if(int(len(str(element)))==1):
-                    edge = (str(pos), str(end_POS_bc), element, variant_index)
-                    f.write(f"{edge}\n")
+                    edge = (str(pos), str(end_POS_bc), element,str(variant_index))
+                    f.write(edge[0]+' '+edge[1]+' '+edge[2]+' '+edge[3]+'\n')
                 else:
                     v = pos  
                     for i, char in enumerate(element.rstrip()):
                         if(i != len(element)-1):
-                            edge = (str(v), str(new_v), char, variant_index)
+                            edge = (str(v), str(new_v), char, str(variant_index))
                             v = new_v
                             new_v +=1
-                            f.write(f"{edge}\n")
+                            f.write(edge[0]+' '+edge[1]+' '+edge[2]+' '+edge[3]+'\n')
                         else:  # the last element
-                            edge = (str(new_v), str(end_POS_bc), char, variant_index)
-                            f.write(f"{edge}\n")
+                            edge = (str(new_v), str(end_POS_bc), char, str(variant_index))
+                            f.write(edge[0]+' '+edge[1]+' '+edge[2]+' '+edge[3]+'\n')
 
 
 # if __name__ == "__main__":
