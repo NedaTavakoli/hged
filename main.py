@@ -266,56 +266,8 @@ def create_sub_ILP(model, G, delta, index_offset, global_var):
     return model
 
 
-# add extra component to edge tuple to store index for ILP variable
-def add_component_to_E(E):
-
-    E_added_compoenent = []
-    for e in E:
-        E_added_compoenent.append((e[0], e[1], e[2], e[3], '-'))
-    return E_added_compoenent
-
-
-# checks whether sample has variant at position pos
-def variant_at_pos(pos, vcf_file_name, sample, GT, chrom):
-
-    # GT=$($bcftools view -H chr_${id}_${sample}.vcf.gz | grep ${v}| cut -f 10)
-    p1 = subprocess.Popen(['$bcftools', 'view', '-H', '-s', sample, '-r', chrom+':'+pos, vcf_file_name], stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(['cut', '-f', '10'], stdin=p1.stdout, stdout=subprocess.PIPE)
-    p1.stdout.close()
-    gt_info = p2.communicate()
-
-    # gt_info example "0|1"
-    if GT == '0' and gt_info[0] != '0':
-        return True
-
-    elif GT == '1' and gt_info[2] != '0':
-        return True
-
-    else:
-        return False
-
-
-# takes coordinate pos,  haplotype sample, length alpha, reference file name, reference id, length of reference
-# returns substring from haplotype or empty string
-def extract_substring(pos, sample, alpha, ref_file_name, vcf_file_name, ref_len, GT, chrom):
-
-    if not variant_at_pos(pos, vcf_file_name, sample, GT, chrom):
-        return ''
-    else:
-
-        # $samtools faidx ${ref}.fa 21:9412076-9412080 |
-        # $bcftools consensus -s ${sample} -H 1  chr${id}_${sample}.vcf.gz
-        end_coordinate = str(min(int(pos) + alpha - 1, ref_len))
-        p1 = subprocess.Popen(['$samtools', 'faidx', ref_file_name, chrom + ':' + pos + '-' + end_coordinate], stdout=subprocess.PIPE)
-        p2 = subprocess.Popen(['$bcftools', 'consensus', '-s', sample, '-H', GT, vcf_file_name],
-                              stdin=p1.stdout, stdout=subprocess.PIPE)
-        p1.stdout.close()
-        output, err = p2.communicate()
-        return output
-
-
 # Takes graph G, location of variants L, alpha, delta, list of samples
-def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref_file, vcf_file, ref_len, chrom):
+def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
 
     model = gp.Model()
 
@@ -324,18 +276,14 @@ def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref_file, vc
     index_offset = num_variants
 
     # add sub-ILPs for each variant position
-    for count, pos in enumerate(L):
-        print('Adding sub ILP for position '+str(count)+' out of '+str(len(L)))
-        for sample in samples:
-            for GT in {'1', '2'}:
-                S = extract_substring(pos, sample, alpha, ref_file, vcf_file, ref_len, GT, chrom)
-                if S != '':
-                    G_ind = reachable_subgraph(G, pos, alpha + delta)
-                    G_a = create_alignment_graph(G_ind, S)
-                    G_a_pruned = prune_alignment_graph(G_a, delta)
-                    model = create_sub_ILP(model, G_a_pruned, delta, index_offset, global_var)
-                    index_offset += len(G_a_pruned.get_E())
-
+    for i, pos in enumerate(locations):
+        for S in substrings[i]:
+            print('\tadding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
+            G_ind = reachable_subgraph(G, pos, alpha + delta)
+            G_a = create_alignment_graph(G_ind, S)
+            G_a_pruned = prune_alignment_graph(G_a, delta)
+            model = create_sub_ILP(model, G_a_pruned, delta, index_offset, global_var)
+            index_offset += len(G_a_pruned.get_E())
 
     # add global objective
     obj = gp.LinExpr(0)
@@ -347,80 +295,65 @@ def create_global_ILP(G, L, alpha, delta, number_variants, samples, ref_file, vc
     return model
 
 
-def load_data(vertex_file_name, edge_file_name, variant_location_file_name, samples_file_name):
+def load_data(vertex_file_name, edges_file_name, location_substring_file_name):
 
-    # load graph vertices and edges
+    # load graph vertices
     vertex_file = open(vertex_file_name, 'r')
     V = []
     for v in vertex_file:
         V.append(v.strip())
     vertex_file.close()
 
+    # load graph edges
     edge_file = open(edges_file_name, 'r')
     E = []
     for e in edge_file:
         e = e.strip().split()
-        E.append((e[0], e[1], e[2], e[3]))
+        E.append((e[0], e[1], e[2], e[3], '-'))
     edge_file.close()
 
-    # load variant locations
-    variant_location_file = open(variant_location_file_name, 'r')
-    L = []
-    for l in variant_location_file:
-        L.append(l.strip())
-    variant_location_file.close()
-
-    # load samples
-    samples_file = open(samples_file_name, 'r')
-    samples = []
-    for s in samples_file:
-        samples.append(s.strip())
-    samples_file.close()
+    # load variant locations and substrings
+    location_file = open(location_substring_file_name, 'r')
+    locations = []
+    substrings = []
+    for l in location_file:
+        arr = l.strip().split()
+        locations.append(arr[0])
+        substrings.append(arr[1:])
+    location_file.close()
 
     # extract number of variants
     num_variants = len(set([e[3] for e in E if e[3] != '-']))
 
-    # extract length of linear backbone
-    ref_len = len([e for e in E if e[3] == '-'])
-
-    return V, E, L, samples, num_variants, ref_len
+    return V, E, locations, substrings, num_variants
 
 
 if __name__ == "__main__":
 
-    # arguments: vertex_file, edge_file, variant_locations_file, samples_file, fasta_ref_file, vcf_file, chromosome number, alpha, delta
+    # arguments: vertex_file, edge_file, variant_location_substring_file, alpha, delta
     vertex_file_name = sys.argv[1]
     edges_file_name = sys.argv[2]
-    variant_location_file_name = sys.argv[3]
-    samples_file_name = sys.argv[4]
-    ref_file_name = sys.argv[5]
-    vcf_file_name = sys.argv[6]
-    chrom = sys.argv[7]
-    alpha = int(sys.argv[8])
-    delta = int(sys.argv[9])
+    location_substring_file_name = sys.argv[3]
+    alpha = int(sys.argv[4])
+    delta = int(sys.argv[5])
 
-    print('Loading data')
-    V, E, L, samples, num_variants, ref_len = load_data(vertex_file_name, edges_file_name, variant_location_file_name,
-                                                        samples_file_name)
+    print('Loading data...')
+    V, E, locations, substrings, num_variants = load_data(vertex_file_name,
+                                                          edges_file_name, location_substring_file_name)
 
-    # Adds extra component in the edges for later ILP use
-    # format: (start vertex, end vertex, symbol, variant #, ILP variable index)
-    print('Adding component to edges')
-    E = add_component_to_E(E)
-
+    print('Constructing graph...')
     G = Graph(V, E)
-    print('Creating global ILP')
-    model = create_global_ILP(G, L, alpha, delta, num_variants, samples, ref_file_name, vcf_file_name, ref_len, chrom)
-    print(model.display())
 
+    print('Constructing ILP...')
+    model = create_global_ILP(G, locations, substrings, num_variants, alpha, delta)
+    print('Finished ILP construction')
+    print('number variables: ' + str(model.NumVars))
+    print('number constraints: ' + str(model.NumConstrs))
+
+    print('\nSolving ILP...')
     model.optimize()
-    print(model.X)
-
-# module load anaconda3 gurobi
-# export PYTHONPATH=$GUROBI_HOME/lib/python3.8_utf32:$PYTHONPATH
-
-#  python main.py chr22_vertices.txt chr22_vg_edges.txt variant_positions_snps_indels_chr22.txt \
-#     chr22_sample.txt hs37d5.fa chr22.vcf.gz 22 3 1
-
-# edges for chr22 is: 36361078
+    num_variants_removed = sum(model.X[:num_variants])
+    print('variants removed: ' + str(model.X[:num_variants]))
+    print('Number variants removed: ' + str(num_variants_removed))
+    print('Number variants retains: ' + str(num_variants - num_variants_removed))
 
