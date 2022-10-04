@@ -18,10 +18,13 @@ samtools=${software_dir}/samtools-1.12/samtools
 cd ${DATA}
 # ***************************************************************************************
 # v=51214426
+# id=22
 # ***************************************************************************************
+id=22
 ref=hs37d5
 variant_positions=($(cut -d ',' -f2 variant_positions_snps_indels_chr${id}.txt))
 samples=($($bcftools query -l chr${id}.vcf)) # array of samples, index from 0
+alpha=100
 
 # For each variant position 
 for v in "${variant_positions[@]}"
@@ -37,19 +40,25 @@ do
         sample_index=${gt:4:5}
         sample=${samples[sample_index]}
         if [ ${h1} -ne 0 ]; then
-            substring1=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1  chr${id}.vcf.gz | tail -1))
+            substring1=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 1  chr${id}.vcf.gz | tail -1))
         fi
-        a+=($substring1)
+        t=$((${alpha}))
+        len_s1=${#substring1}
+        min_v1=$((t<len_s1? t : len_s1))
+        a+=(${substring1:0:min_v})
+        # min of ${alpha}-1  and len(substring1)
         if [ ${h2} -ne 0 ]; then
-            substring2=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 2  chr${id}.vcf.gz | tail -1))
+            substring2=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 2  chr${id}.vcf.gz | tail -1))
         fi
-        a+=($substring2)
+        len_s2=${#substring2}
+        min_v2=$((t<len_s2? t : len_s2))
+        a+=(${substring2:0:min_v2})
     done
-    echo ${a[@]}
+    #echo ${a[@]}
     uniq_s=$(printf "%s\n" "${a[@]}" | sort -u)
-    echo $uniq_s >> chr${id}_pos_substrings.txt
-done    
-
+    #echo $uniq_s >> chr${id}_pos_substrings.txt
+    echo $uniq_s
+done >> chr${id}_pos_substrings_len_${alpha}.txt
 
 
 
