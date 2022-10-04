@@ -19,12 +19,13 @@ cd ${DATA}
 # ***************************************************************************************
 # v=51214426
 # id=22
-# ***************************************************************************************
 id=22
+alpha=100
+# ***************************************************************************************
+
 ref=hs37d5
 variant_positions=($(cut -d ',' -f2 variant_positions_snps_indels_chr${id}.txt))
 samples=($($bcftools query -l chr${id}.vcf)) # array of samples, index from 0
-alpha=100
 
 # For each variant position 
 for v in "${variant_positions[@]}"
