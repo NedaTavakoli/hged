@@ -3,7 +3,7 @@
 # ***************************************************************************************
 ## TODO: CHANGE THIS AS ARGUMENT
 id=22
-alpha=3
+alpha=100
 # ***************************************************************************************
 
 ref=hs37d5
@@ -42,14 +42,13 @@ do
             do
                 s2+=$i
             done
-            echo $s2
             t=$((${alpha}))
             len_s2=${#s2}
             min_v2=$((t<len_s2? t : len_s2))
             a+=(${s2:0:min_v2})
         fi
     done
-    echo ${a[@]}
+    # echo ${a[@]}
     uniq_s=$(printf "%s\n" "${a[@]}" | sort -u)
     echo $uniq_s
 done >> chr${id}_pos_substrings_len_${alpha}.txt
