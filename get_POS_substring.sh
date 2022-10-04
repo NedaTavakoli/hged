@@ -3,7 +3,7 @@
 # ***************************************************************************************
 ## TODO: CHANGE THIS AS ARGUMENT
 id=22
-alpha=10
+alpha=3
 # ***************************************************************************************
 
 ref=hs37d5
@@ -24,19 +24,32 @@ do
         sample_index=${gt:4:5}
         sample=${samples[sample_index]}
         if [ ${h1} -ne 0 ]; then
-            substring1=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 1  chr${id}.vcf.gz | tail -1))
+            substring1=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 1  chr${id}.vcf.gz))
+            s1=''
+            for i in "${substring1[@]:1}"
+            do
+                s1+=$i
+            done
             t=$((${alpha}))
-            len_s1=${#substring1}
+            len_s1=${#s1}
             min_v1=$((t<len_s1? t : len_s1))
-            a+=(${substring1:0:min_v})
+            a+=(${s1:0:min_v1})
         fi
         if [ ${h2} -ne 0 ]; then
-            substring2=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 2  chr${id}.vcf.gz | tail -1))
-            len_s2=${#substring2}
+            substring2=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 2  chr${id}.vcf.gz))
+            s2=''
+            for i in "${substring2[@]:1}"
+            do
+                s2+=$i
+            done
+            echo $s2
+            t=$((${alpha}))
+            len_s2=${#s2}
             min_v2=$((t<len_s2? t : len_s2))
-            a+=(${substring2:0:min_v2})
+            a+=(${s2:0:min_v2})
         fi
     done
+    echo ${a[@]}
     uniq_s=$(printf "%s\n" "${a[@]}" | sort -u)
     echo $uniq_s
 done >> chr${id}_pos_substrings_len_${alpha}.txt
