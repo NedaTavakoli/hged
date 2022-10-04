@@ -1,14 +1,33 @@
 #!/bin/bash
 
-id=22
-# change this according to your project directory
-bcftools=${software_dir}/bcftools-1.9/bcftools
-samtools=${software_dir}/samtools-1.12/samtools
-# ***************************************************************************************
+if [ $# -eq 0 ];
+then
+    echo "$0: Missing arguments"
+    exit 1
+elif [ $# -gt 2 ];
+then
+    echo "$0: Too many arguments: $@"
+    exit 1
+else
+    echo "We got some argument(s)"
+    echo "==========================="
+    echo "Number of arguments.: $#"
+    echo "List of arguments...: $@"
+    echo "Arg #1 chrId (Ex: 22)..............:  $1"
+    echo "Arg #2 BCFtools_path  ..............: $2"
+    echo "Arg #3 SAMtools_path  ..............: $3"
+    echo "Arg #4 VCF_file  ...................: $4"
+    echo "Arg #5 ref (without fa) ......................: $5"
+    echo "==========================="
+fi
 
+# ***************************************************************************************
 # inputs
-MyVariants=chr${id}.vcf.gz
-ref=hs37d5 
+samtools=$2
+bcftools=$3
+MyVariants=$3
+ref=$5 
+# ***************************************************************************************
 
 
 # get list of variant positions_indel_snps
@@ -74,21 +93,8 @@ echo 'Number of haplotypes:'$num_haplotypes
 # get list of edges
 # **************************************************************************************
 # after running the following python file
-# python 7.1.vg.edges.py
+python 7.1.vg.edges.py --chr ${id} --start ${start}\
+    --end ${end} --bc ${num_vertice_linear_bc}
 cat chr${id}_edges.txt chr${id}_edges_2.txt | sort > chr${id}_vg_edges.txt
 
 
-#***************************************************************************************
-# Generate vcf files for each samples and chromosomes and index them
-#***************************************************************************************
-while read sample; do
-echo "${sample}"
-
-# 1: Generate vcf file for a given sample (haplotype), -oz is used to get gz format
-$bcftools view -s ${sample} -Oz chr${id}.vcf.gz > chr_${id}_${sample}.vcf.gz
-echo "done vcf for $sample"
-
-# 2. Index vcf file (required for bcftools consensus)
-$bcftools index chr_${id}_${sample}.vcf.gz
-done < chr22_sample.txt 
-#***************************************************************************************
