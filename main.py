@@ -4,6 +4,7 @@ from gurobipy import *
 import bisect
 import subprocess
 import sys
+import time
 
 
 class Graph:
@@ -269,6 +270,7 @@ def create_sub_ILP(model, G, delta, index_offset, global_var):
 # Takes graph G, location of variants L, alpha, delta, list of samples
 def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
 
+    start = time.time()
     model = gp.Model()
 
     # add global variables
@@ -279,10 +281,26 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     for i, pos in enumerate(locations):
         for S in substrings[i]:
             print('\tadding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
+            start2 = time.time()
             G_ind = reachable_subgraph(G, pos, alpha + delta)
+            end2 = time.time()
+            total_eachable_subgraph = end2 - start2
+            print('\tTotal time for reachable subgraph: ', total_eachable_subgraph)
+            start3 = time.time()
             G_a = create_alignment_graph(G_ind, S)
+            end3 = time.time()
+            total_create_alignment_graph = end3 - start3
+            print('\tTotal time for createing alignment graph: ', total_create_alignment_graph)
+            start4 = time.time()
             G_a_pruned = prune_alignment_graph(G_a, delta)
+            end4 = time.time()
+            total_prune_alignment_graph = end4 - start4
+            print('\tTotal time for prune alignment graph ', total_prune_alignment_graph)
+            start5 = time.time()
             model = create_sub_ILP(model, G_a_pruned, delta, index_offset, global_var)
+            end5 = time.time()
+            total_create_sub_ILP = end5 - start5
+            print('\tTotal time for create_sub_ILP: ', total_create_sub_ILP)
             index_offset += len(G_a_pruned.get_E())
 
     # add global objective
@@ -291,6 +309,11 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
         obj += global_var[i]
     model.setObjective(obj, GRB.MAXIMIZE)
     model.update()
+
+    # end time
+    end = time.time()
+    total_time_ILP = end - start
+    print("Total time:", total_time_ILP)
 
     return model
 
