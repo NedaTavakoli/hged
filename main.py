@@ -1,5 +1,4 @@
 import gurobipy as gp
-from gurobipy import *
 import networkx as nx
 import time
 import sys
@@ -83,52 +82,52 @@ def prune_alignment_graph(G, start_x, end, delta):
 def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
 
     # add ILP index to edges
-    E = G.edges()
-    G_with_index = nx.DiGraph()
+    E = G.edges
+    G_with_index = nx.MultiDiGraph()
     for i, e in enumerate(E):
         # start, end, weight, variant, ILP-index
-        G_with_index.add_edge(e[0], e[1], (e[2][0], e[2][1], i + index_offset))
+        G_with_index.add_edge(e[0], e[1], weight=e[2][0], variant=e[2][1], index=i+index_offset)
 
     # Add sub-ILP variables
-    E_with_index = G_with_index.edges()
-    y = model.addVars([e[2][2] for e in E_with_index], vtype=GRB.BINARY)
+    E_with_index = G_with_index.edges(data=True)
+    y = model.addVars([e[2]['index'] for e in E_with_index], vtype=gp.GRB.BINARY)
 
     # add constraints for source vertex
     rhs = gp.LinExpr(0)
-    for e in G_with_index.out_edges[start_v]:
-        rhs += y[e[2][2]]
+    for e in G_with_index.out_edges(start_v, data=True):
+        rhs += y[e[2]['index']]
     model.addConstr(1 == rhs)
 
     # add constraints for 'internal' vertices
-    V = G_with_index.nodes()
+    V = G_with_index.nodes
     for i, v in enumerate(V):
         if v != 'end':
             lhs = gp.LinExpr(0)
-            for e in G_with_index.in_edges(v):
-                lhs += y[e[2][2]]
+            for e in G_with_index.in_edges(v, data=True):
+                lhs += y[e[2]['index']]
 
             rhs = gp.LinExpr(0)
-            for e in G_with_index.out_edges(v):
-                rhs += y[e[2][2]]
+            for e in G_with_index.out_edges(v, data=True):
+                rhs += y[e[2]['index']]
             model.addConstr(lhs == rhs)
 
     # add constraints for sink vertex
     lhs = gp.LinExpr(0)
-    for e in G_with_index.in_edges(end_v):
-        lhs += y[e[2][2]]
+    for e in G_with_index.in_edges(end_v, data=True):
+        lhs += y[e[2]['index']]
     model.addConstr(lhs == 1)
 
     # add weight constraint
     lhs = gp.LinExpr(0)
-    for e in G_with_index.edges():
-        lhs += e[2][0] * y[e[2][2]]
+    for e in G_with_index.edges(data=True):
+        lhs += e[2]['weight'] * y[e[2]['index']]
     model.addConstr(lhs <= delta)
 
     # add global binding constraints
     for e in E_with_index:
-        if e[2][1] != '-':
+        if e[2]['variant'] != '-':
             lhs = gp.LinExpr(0)
-            lhs += y[e[2][2]] + global_var[int(e[2][1])]
+            lhs += y[e[2]['index']] + global_var[int(e[2]['variant'])]
             model.addConstr(lhs <= 1)
 
     model.update()
@@ -142,7 +141,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     model = gp.Model()
 
     # add global variables
-    global_var = model.addVars(range(1, number_variants+1), vtype=GRB.BINARY)
+    global_var = model.addVars(range(1, number_variants+1), vtype=gp.GRB.BINARY)
     index_offset = num_variants
 
     # add sub-ILPs for each variant position
@@ -180,7 +179,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     obj = gp.LinExpr(0)
     for i in range(1, number_variants+1):
         obj += global_var[i]
-    model.setObjective(obj, GRB.MAXIMIZE)
+    model.setObjective(obj, gp.GRB.MAXIMIZE)
     model.update()
 
     # end time
