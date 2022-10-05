@@ -15,25 +15,23 @@ def create_alignment_graph(G, start_v, S):
 
     G_A = nx.MultiDiGraph()
     for i in range(len(S) + 1):
-        # add vertices for that level
 
         if i < len(S):
             # add insertion edges
-            for e in G.edges:
-                # start, end, (weight, variant)
-                G_A.add_edge(e[0] + "." + str(i), e[1] + "." + str(i), (1, e[2][1]))
+            for e in G.edges(data=True):
+                G_A.add_edge(e[0] + "." + str(i), e[1] + "." + str(i), weight=1, variant=e[2]['variant'])
 
             # add deletion edges
-            for v in G.nodes:
-                G_A.add_edge(v + "." + str(i), v + "." + str(i+1), (1, '-'))
+            for v in G.nodes():
+                G_A.add_edge(v + "." + str(i), v + "." + str(i+1), weight=1, variant='-')
 
             # add matching / sub edge
-            for e in G.edges:
-                G_A.add_edge(e[0] + "." + str(i), e[1] + "." + str(i+1), (0 if S[i] == e[2][0] else 1, e[2][1]))
+            for e in G.edges(data=True):
+                G_A.add_edge(e[0] + "." + str(i), e[1] + "." + str(i+1), weight=(0 if S[i] == e[2]['symbol'] else 1), variant=e[2]['variant'])
 
     # add edges to sink
     for v in G.nodes:
-        G_A.add_edge(v + "." + str(len(S)), 'end', (0, '-'))
+        G_A.add_edge(v + "." + str(len(S)), 'end', weight=0, variant='-')
 
     return G_A, start_v + ".0", 'end'
 
@@ -41,7 +39,7 @@ def create_alignment_graph(G, start_v, S):
 # remove multi-edges, keeping ones with lowest weight
 def remove_multiedges(G):
 
-    E_sorted = sorted(G.edges)
+    E_sorted = sorted(G.edges(data=True), key=lambda tup: (tup[0], tup[1], tup[2]['weight']))
 
     E_a_no_dup = [E_sorted[0]]
     for i in range(1, len(E_sorted)):
@@ -52,11 +50,11 @@ def remove_multiedges(G):
         else:
             E_a_no_dup.append(e)
 
-    G_pruned = nx.MultiDiGraph()
+    G_reduced = nx.MultiDiGraph()
     for e in E_a_no_dup:
-        G_pruned.add_edge(e[0], e[1], e[2])
+        G_reduced.add_edge(e[0], e[1], weight=e[2]['weight'], variant=e[2]['variant'])
 
-    return G_pruned
+    return G_reduced
 
 
 def prune_alignment_graph(G, start_x, end, delta):
@@ -67,8 +65,8 @@ def prune_alignment_graph(G, start_x, end, delta):
     # keep only vertices reachable from starting vertex with path of weight at most delta
     # and reachable from end in G^R with path of weight at most delta
     # remove edges with weight 0
-    path_lengths_from_front = nx.shortest_path_length(G_no_dup, source=start_x, weight=lambda _, __, a: list(a.keys())[0][0])
-    path_lengths_from_end = nx.shortest_path_length(G_no_dup.reverse(), source=end, weight=lambda _, __, a: list(a.keys())[0][0])
+    path_lengths_from_front = nx.shortest_path_length(G_no_dup, source=start_x, weight=lambda _, __, d: d[0]['weight'])
+    path_lengths_from_end = nx.shortest_path_length(G_no_dup.reverse(), source=end, weight=lambda _, __, d: d[0]['weight'])
 
     reachable_from_front = [v for v in path_lengths_from_front if path_lengths_from_front[v] <= delta]
     reachable_from_end = [v for v in path_lengths_from_end if path_lengths_from_end[v] <= delta]
@@ -82,11 +80,11 @@ def prune_alignment_graph(G, start_x, end, delta):
 def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
 
     # add ILP index to edges
-    E = G.edges
+    E = G.edges(data=True)
     G_with_index = nx.MultiDiGraph()
     for i, e in enumerate(E):
         # start, end, weight, variant, ILP-index
-        G_with_index.add_edge(e[0], e[1], weight=e[2][0], variant=e[2][1], index=i+index_offset)
+        G_with_index.add_edge(e[0], e[1], weight=e[2]['weight'], variant=e[2]['variant'], index=i+index_offset)
 
     # Add sub-ILP variables
     E_with_index = G_with_index.edges(data=True)
@@ -148,30 +146,14 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     for i, pos in enumerate(locations):
         for S in substrings[i]:
 
-            print('\tadding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
-            start2 = time.time()
+            print('\tAdding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
+            #start_sub = time.time()
             G_ind = reachable_subgraph(G, pos, alpha + delta)
-            end2 = time.time()
-            total_eachable_subgraph = end2 - start2
-            print('\tTotal time for reachable subgraph: ', total_eachable_subgraph)
-
-            start3 = time.time()
             G_a, start_v, end_v = create_alignment_graph(G_ind, pos, S)
-            end3 = time.time()
-            total_create_alignment_graph = end3 - start3
-            print('\tTotal time for creating alignment graph: ', total_create_alignment_graph)
-
-            start4 = time.time()
             G_a_pruned = prune_alignment_graph(G_a, start_v, end_v, delta)
-            end4 = time.time()
-            total_prune_alignment_graph = end4 - start4
-            print('\tTotal time for pruning alignment graph ', total_prune_alignment_graph)
-
-            start5 = time.time()
             model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)
-            end5 = time.time()
-            total_create_sub_ILP = end5 - start5
-            print('\tTotal time for create_sub_ILP: ', total_create_sub_ILP)
+            #end_sub = time.time()
+            #print('\ttime for sub_ILP: ' + str(round(end_sub - start_sub, 5)) + ' seconds')
 
             index_offset += len(G_a_pruned.edges())
 
@@ -180,6 +162,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     for i in range(1, number_variants+1):
         obj += global_var[i]
     model.setObjective(obj, gp.GRB.MAXIMIZE)
+
     model.update()
 
     # end time
@@ -220,21 +203,11 @@ def construct_graph(E):
     G = nx.MultiDiGraph()
     for e in E:
         # start, end, (symbol, variant #)
-        G.add_edge(e[0], e[1], (e[2], e[3]))
+        G.add_edge(e[0], e[1], symbol=e[2], variant=e[3])
     return G
 
+
 if __name__ == "__main__":
-
-
-    # # edges, format: (start vertex, end vertex, symbol, variant #)
-    # E = [('123', '124', 'A', '-'), ('124', '125', 'T', '-'), ('123', '124', 'T', '1'), \
-    #      ('123', '200', 'C', '2'), ('200', '125', 'G', '2'), ('125', '126', 'T', '-'), \
-    #      ('125', '126', 'A', '3'), ('124', '126', 'T', '4')]
-    # locations = ['123']
-    # substrings = [['TT']]
-    # num_variants = 4
-    # delta = 1
-    # alpha = 2
 
     # arguments: edge_file, variant_location_substring_file, alpha, delta
     edges_file_name = sys.argv[1]
@@ -249,6 +222,7 @@ if __name__ == "__main__":
 
     print('Constructing ILP...')
     model = create_global_ILP(G, locations, substrings, num_variants, alpha, delta)
+    # print(model.display())
     print('Finished ILP construction')
     print('number variables: ' + str(model.NumVars))
     print('number constraints: ' + str(model.NumConstrs))
@@ -256,6 +230,6 @@ if __name__ == "__main__":
     print('\nSolving ILP...')
     model.optimize()
     num_variants_removed = sum(model.X[:num_variants])
-    print('variants removed: ' + str(model.X[:num_variants]))
+    print('Solution Vector (1\'s represent removal):\n' + str(model.X[:num_variants]))
     print('Number variants removed: ' + str(num_variants_removed))
-    print('Number variants retains: ' + str(num_variants - num_variants_removed))
+    print('Number variants retained: ' + str(num_variants - num_variants_removed))
