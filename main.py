@@ -101,7 +101,7 @@ def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
     # add constraints for 'internal' vertices
     V = G_with_index.nodes
     for i, v in enumerate(V):
-        if v != 'end':
+        if v != end_v and v != start_v:
             lhs = gp.LinExpr(0)
             for e in G_with_index.in_edges(v, data=True):
                 lhs += y[e[2]['index']]
