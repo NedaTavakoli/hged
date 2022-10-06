@@ -147,13 +147,13 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
         for S in substrings[i]:
 
             print('\tAdding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
-            #start_sub = time.time()
+            start_sub = time.time()
             G_ind = reachable_subgraph(G, pos, alpha + delta)
             G_a, start_v, end_v = create_alignment_graph(G_ind, pos, S)
             G_a_pruned = prune_alignment_graph(G_a, start_v, end_v, delta)
             model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)
-            #end_sub = time.time()
-            #print('\ttime for sub_ILP: ' + str(round(end_sub - start_sub, 5)) + ' seconds')
+            end_sub = time.time()
+            print('\ttime for sub_ILP: ' + str(round(end_sub - start_sub, 5)) + ' seconds')
 
             index_offset += len(G_a_pruned.edges())
 
