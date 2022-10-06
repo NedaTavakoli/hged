@@ -157,6 +157,9 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
 
             index_offset += len(G_a_pruned.edges())
 
+            print('number variables: ' + str(model.NumVars))
+            print('number constraints: ' + str(model.NumConstrs))
+
     # add global objective
     obj = gp.LinExpr(0)
     for i in range(1, number_variants+1):
