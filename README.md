@@ -20,20 +20,7 @@ chmod +x script/get_fa_for_each_haplotype.sh
 # ./script/get_fa_for_each_haplotype.sh
 ```
 
-List of vertices
-
-List of edges (start, end, symbol, variant number)
-
-List of variant positions
-
-Number of variants: 
-    chr22: 1102765  
-    chr1: 6463830
-
-Number of haplotypes: 5008
-
-
-## This repository is to solve variant selection in genome graphs under edit disatnce
+This repository is used to solve variant selection in genome graphs under edit disatnce
 in other words for a given complete variation graph, it creates a reduced variation graph in which 
 some variants are removed subject to some constraints. The constraints are for every substring of length 
 alpha observed in haplotypes, the reduced varaition graph guarantees to preserve those substrings with
