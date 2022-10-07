@@ -8,14 +8,11 @@ The overall workflow is:
 git clone https://github.com/NedaTavakoli/hged
 cd hged
 project_dir=$(pwd)  #project top-level directory
-#*
-#* change this numbers according to your needs
-chr_id=22
-alpha=150
-#*
+chr_id=22 #* change this numbers according to your needs
+alpha=150 #* change this numbers according to your needs
 # download data and softwares
 chmod +x dependencies.sh
-./dependencies.sh
+./dependencies.sh ${chr_id}
 # cosntruct edge_labeled variation graph 
 chmod +x scripts/construct_graph.sh
 ./scripts/construct_graph.sh ${chr_id} ${alpha}
@@ -28,7 +25,7 @@ chmod +x script/get_fa_for_each_haplotype.sh
 ```
 
 This repository is used to solve variant selection in genome graphs under edit disatnce
-in other words for a given complete variation graph, it creates a reduced variation graph in which 
+in other words for a given complete variation graph for each chromosome, it creates a reduced variation graph in which 
 some variants are removed subject to some constraints. The constraints are for every substring of length 
 alpha observed in haplotypes, the reduced varaition graph guarantees to preserve those substrings with
 at most delta errors (i.e., edit distance of delta among alpha-long substrings of haplotypes in complete variation graph with those of reduced variation graph).
