@@ -1,8 +1,24 @@
 #!/bin/bash
 
 # ***************************************************************************************
-## TODO: CHANGE THIS AS ARGUMENT
-id=22
+if [ $# -eq 0 ];
+then
+    echo "$0: Missing arguments"
+    exit 1
+elif [ $# -gt 2 ];
+then
+    echo "$0: Too many arguments: $@"
+    exit 1
+else
+    echo "Construct edge-labeled varion graph ( args: chr id, length of substrings"
+    echo "==========================="
+    echo "Number of arguments.: $#"
+    echo "List of arguments...: $@"
+    echo "Arg #1 chrId (Ex: 22)..................................: $1"
+    echo "==========================="
+fi
+
+id=$1
 # ***************************************************************************************
 project_dir=$(pwd)
 mkdir -p data && cd data

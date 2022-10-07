@@ -1,11 +1,27 @@
 #!/bin/bash
 
-# ***************************************************************************************
-## TODO: CHANGE THIS AS ARGUMENT
-id=22
-alpha=100
-# ***************************************************************************************
-#cd ..  # TODO: UNCOMENT IN ON REPO
+if [ $# -eq 0 ];
+then
+    echo "$0: Missing arguments"
+    exit 1
+elif [ $# -gt 2 ];
+then
+    echo "$0: Too many arguments: $@"
+    exit 1
+else
+    echo "Construct edge-labeled varion graph ( args: chr id, length of substrings"
+    echo "==========================="
+    echo "Number of arguments.: $#"
+    echo "List of arguments...: $@"
+    echo "Arg #1 chrId (Ex: 22)..................................: $1"
+    echo "Arg #2 alpha (leng of substring) ......................: $2"
+    echo "==========================="
+fi
+
+id=$1
+alpha=$2
+
+#cd ..  # **** TODO: UNCOMENT IN ON REPO
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)

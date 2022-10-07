@@ -8,15 +8,20 @@ The overall workflow is:
 git clone https://github.com/NedaTavakoli/hged
 cd hged
 project_dir=$(pwd)  #project top-level directory
+#*
+#* change this numbers according to your needs
+chr_id=22
+alpha=150
+#*
 # download data and softwares
 chmod +x dependencies.sh
 ./dependencies.sh
 # cosntruct edge_labeled variation graph 
-chmod +x script/construct_graph.sh
-./script/construct_graph.sh
+chmod +x scripts/construct_graph.sh
+./scripts/construct_graph.sh ${chr_id} ${alpha}
 # construct pos and list of substrings of length alpha from halpotypes
-chmod +x script/get_POS_substrings.sh
-./script/get_POS_substrings.sh
+chmod +x scripts/get_POS_substrings.sh 
+./scripts/get_POS_substrings.sh ${chr_id} ${alpha}
 # OPTIONAL: Construct fasta file per each haplotype
 chmod +x script/get_fa_for_each_haplotype.sh
 # ./script/get_fa_for_each_haplotype.sh
