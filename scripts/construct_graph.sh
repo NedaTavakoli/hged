@@ -32,7 +32,7 @@ samtools=${software_dir}/samtools-1.12/samtools
 cd ${DATA}
 
 mkdir graph_alpha_${alpha}
-graph=${DATA}/graph_alpha_${alpha}
+graph=${DATA}/chr${id}_graph_alpha_${alpha}
 
 start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
 end=$(cat variant_positions_snps_indels_chr${id}.txt |tail -1)

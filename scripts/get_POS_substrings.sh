@@ -30,7 +30,7 @@ bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
 cd ${DATA}
 
-graph=${DATA}/graph_alpha_${alpha}
+graph=${DATA}/chr${id}_graph_alpha_${alpha}
 
 MyVariants=chr${id}_snps_indels.vcf.gz
 ref=hs37d5
@@ -75,7 +75,7 @@ do
             a+=(${s2:0:min_v2})
         fi
     done
-    # echo ${a[@]}
+    echo ${a[@]}
     uniq_s=$(printf "%s\n" "${a[@]}" | sort -u)
     echo $uniq_s
 done >> ${graph}/chr${id}_POS_substrings_len_${alpha}.txt
