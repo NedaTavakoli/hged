@@ -39,6 +39,27 @@ hged
 ...
 ```
 
+The algorithm has the following steps:
+```
+1- Loading data: 
+    Inputs: edges_file_name, location_substring_file_name
+    outputs: E, locations, substrings, num_variants
 
+2- Cosntruct graph  
+    Inputs: E
+    Outputs: G
+
+3- Create global ILP
+    Inputs: G, locations, substrings, number_variants, alpha, delta
+    Outputs: model  
+
+        |___Create global ILP 
+        |   |___G_ind = reachable_subgraph(G, pos, alpha + delta) #bFind the reachable subgraph of distance d from a pos
+        |   |___G_a, start_v, end_v = create_alignment_graph(G_ind, pos, S) # igonre source, pos is the top-left vertex
+        |   |___G_a_pruned = prune_alignment_graph(G_a, start_v, end_v, delta) 
+        |   |___|___G_no_dup = remove_multiedges(G) # remove multi-edges keeping the ones with the lowest weight, sort edges and remove duplicates with largest wei
+        |   |___model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)  # create sub ILPS
+ ```     
+  
 
 
