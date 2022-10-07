@@ -2,6 +2,7 @@ import gurobipy as gp
 import networkx as nx
 import time
 import sys
+import datetime
 
 
 # obtain induced subgraph reachable from v with distance d
@@ -128,7 +129,6 @@ def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
             lhs += y[e[2]['index']] + global_var[int(e[2]['variant'])]
             model.addConstr(lhs <= 1)
 
-    model.update()
     return model
 
 
@@ -146,19 +146,37 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     for i, pos in enumerate(locations):
         for S in substrings[i]:
 
-            print('\tAdding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
-            start_sub = time.time()
+            print('\nAdding sub-ILP for position number ' + str(i+1) + ' out of ' + str(len(locations)))
+            start2 = time.time()
             G_ind = reachable_subgraph(G, pos, alpha + delta)
+            end2 = time.time()
+            total_reachable_subgraph = end2 - start2
+            print('\tTime for reachable subgraph: ', total_reachable_subgraph)
+
+            start3 = time.time()
             G_a, start_v, end_v = create_alignment_graph(G_ind, pos, S)
+            end3 = time.time()
+            total_create_alignment_graph = end3 - start3
+            print('\tTime for createing alignment graph: ', total_create_alignment_graph)
+
+            start4 = time.time()
             G_a_pruned = prune_alignment_graph(G_a, start_v, end_v, delta)
+            end4 = time.time()
+            total_prune_alignment_graph = end4 - start4
+            print('\tTime for prune alignment graph ', total_prune_alignment_graph)
+
+            start5 = time.time()
             model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)
-            end_sub = time.time()
-            print('\ttime for sub_ILP: ' + str(round(end_sub - start_sub, 5)) + ' seconds')
+            end5 = time.time()
+            total_create_sub_ILP = end5 - start5
+            print('\tTime for create_sub_ILP: ', total_create_sub_ILP)
 
             index_offset += len(G_a_pruned.edges())
 
-            print('number variables: ' + str(model.NumVars))
-            print('number constraints: ' + str(model.NumConstrs))
+            total_sub_ILP_time = total_reachable_subgraph + total_create_alignment_graph + total_prune_alignment_graph \
+                                 + total_create_sub_ILP
+            print('\tTotal time for adding sub-ILP: ', str(total_sub_ILP_time))
+            print('\tEstimated time remaining: ' + str(datetime.timedelta(seconds=((len(locations)-i)*total_sub_ILP_time))))
 
     # add global objective
     obj = gp.LinExpr(0)
