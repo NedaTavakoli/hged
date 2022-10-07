@@ -1,4 +1,4 @@
-# Haplotype_aware variation graphs_edit disatance
+# Haplotype_aware Variation Graphs under Edit Disatance
 
 The overall workflow is:
 
