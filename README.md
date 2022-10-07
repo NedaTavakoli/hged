@@ -1,4 +1,4 @@
-## Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance
+# <nobr>Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance </nobr>
 
 The overall workflow is:
 
