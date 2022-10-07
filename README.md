@@ -1,8 +1,4 @@
-# hged
 # Haplotype_aware variation graphs_edit disatance
-
-# -----------------------------------------
-To test the repository, use phoenix:
 
 The overall workflow is:
 
