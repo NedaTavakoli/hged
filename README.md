@@ -1,5 +1,5 @@
 <p align="center">
-width="20" Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance
+ <span style="font-size: 26px">Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance</span>
 </p>
 
 The overall workflow is:
