@@ -1,7 +1,3 @@
-<p align="center">
- <span style="font-size: 26px">Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance</span>
-</p>
-
 ## Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance
 
 ## Dependencies
