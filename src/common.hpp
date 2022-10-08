@@ -33,7 +33,7 @@ void parseandSave(int argc, char** argv, Parameters &param)
      clipp::required("-a") & clipp::value("alpha", param.alpha).doc("path length in variation graph (e.g., 500)"),
      clipp::required("-d") & clipp::value("delta", param.delta).doc("differences allowed (e.g., 10)"),
      clipp::required("-chr") & clipp::value("chr", param.chr).doc("choromosome id (e.g., 22), make it consistent with vcf file"),
-     clipp::required("-vcf") & clipp::value("file1", param.vcffile).doc("compressed vcf file (something.vcf.gz)"),
+     clipp::required("-vcf") & clipp::value("file1", param.vcffile).doc("compressed vcf file (contains only snps indels, output of running dependecies.sh) (something.vcf.gz)"),
      clipp::required("-fa") & clipp::value("file2", param.fasta_ref_file).doc("reference genome fasta file (something.fa)"),
      clipp::required("-fa") & clipp::value("file2", param.pos).doc("reference genome fasta file (something.fa)"),
      clipp::option("-prefix") & clipp::value("file3", param.prefix).doc("filename to optionally save input and output variants")
