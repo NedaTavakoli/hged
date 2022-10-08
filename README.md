@@ -2,7 +2,7 @@
  <span style="font-size: 26px">Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance</span>
 </p>
 
-
+## Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance
 
 ## Dependencies
 - A C++ compiler with c++11 support, e.g., GNU g++ (version 5+)
@@ -43,7 +43,7 @@ All the executables implement a variety of algorithms to achieve variant graph s
 ```
 SYNOPSIS
 
-        ilp_snp_indels    -a <alpha> -d <delta> -vcf <file1> -chr <id> [-prefix <file2>] [--pos]
+        ilp_snp_indels    -a <alpha> -d <delta>  -chr <id> -vcf <file1>  -fa <file2>  -pos <file3> [-prefix <file4>]
 
 
 OPTIONS
