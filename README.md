@@ -2,6 +2,25 @@
  <span style="font-size: 26px">Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance</span>
 </p>
 
+
+
+## Dependencies
+- A C++ compiler with c++11 support, e.g., GNU g++ (version 5+)
+- [samtools](https://vcftools.github.io/)
+- [bcftools](https://vcftools.github.io/)
+- [Gurobi](https://www.gurobi.com)
+- [clipp](https://github.com/muellan/clipp)
+- [cxx-prettyprint](https://github.com/louisdx/cxx-prettyprint)
+
+## Installation
+The above dependencies can be handled by running script `dependencies.sh`.
+```sh
+git clone https://github.com/NedaTavakoli/hged
+cd VF
+./dependencies.sh
+make
+```
+
 The overall workflow is:
 
 ```sh
@@ -20,9 +39,26 @@ chmod +x scripts/construct_graph.sh
 # construct pos and list of substrings of length alpha from halpotypes
 chmod +x scripts/get_POS_substrings.sh 
 ./scripts/get_POS_substrings.sh ${chr_id} ${alpha}
-# OPTIONAL: Construct fasta file per each haplotype
-chmod +x script/get_fa_for_each_haplotype.sh
-# ./script/get_fa_for_each_haplotype.sh
+make
+```
+
+After a successful compilation, expect executables named as `ilp_snp_indels` in a directory named `build`.
+
+## Usage
+All the executables implement a variety of algorithms to achieve variant graph size reduction, but they all have a similar interface.
+```
+SYNOPSIS
+
+        ilp_snp_indels    -a <alpha> -d <delta> -vcf <file1> -chr <id> [-prefix <file2>] [--pos]
+
+
+OPTIONS
+        <alpha>     path length in variation graph (e.g., 500)
+        <delta>     differences allowed (e.g., 10)
+        <file1>     uncompressed vcf file (something.vcf)
+        <file2>     filename to optionally save input and output variants
+        <id>        chromosome id (e.g., 1 or chr1), make it consistent with vcf file
+        --pos       set objective to minimize variation positions rather than variant count
 ```
 
 This repository is used to solve variant selection in genome graphs under edit disatnce

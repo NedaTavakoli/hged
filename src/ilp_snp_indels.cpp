@@ -42,8 +42,6 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       variant_pos.push_back(col1);
     }
 
-    samples=($($bcftools query -l chr${id}.vcf.gz)) # array of samples, index from 0
-
    // Extract samples from vcf file
    // seed random generator by time in seconds (this may create issue if two instances are launched at the same time)
     srand(time(0)); int random = rand() % 100000;  
@@ -62,7 +60,6 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       iss >> col1;
       samples.push_back(col1);
     }
-
 
 
     
