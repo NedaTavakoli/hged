@@ -21,7 +21,7 @@
  *          This function outputs substrings of length alpha at each variant position.
  */
 
-void extract_pos_substring (const std::string &vcf_file, const std::string &fasta_file, const std::string &pos_file, const int &alpha, std::vector<int> &variant_pos, std::vector<int> &samples)
+void extract_pos_substring (const std::string &vcf_file, const std::string &fasta_file, const std::string &pos_file, const int &alpha, const int &chr, std::vector<int> &variant_pos, std::vector<int> &samples)
 {
    // Extract variant positions from variant position file
    // seed random generator by time in seconds (this may create issue if two instances are launched at the same time)
@@ -61,6 +61,22 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       samples.push_back(col1);
     }
 
+    // for (std::size_t i = 0; i < variant_pos.size(); i++)
+    // {
+    //   //  arr=($($bcftools view -H -r 22:${v} chr${id}.vcf.gz| awk -F"\t" '{split($0, header, "\t");} \
+    //     {for (i=10; i<=NF; i++) {if (gsub(/0\|1|1\|0|0\/1|1\/0/, "", $(i))==1) {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))  
+    //   srand(time(0)); int random = rand() % 100000;  
+    //   std::string tmp_file3 = ".VF." + std::to_string(random) + ".txt";
+    //   std::string cmd = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + chr + ":" + i +  vcf_file + " | " + \
+    //         "awk -F"\t" {split($0, header, "\t");{for (i=10; i<=NF; i++) {if (gsub(/0\|1|1\|0|0\/1|1\/0/, "", $(i))==1) {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))}" + " >  " + tmp_file3;
+    //   std::cout << "INFO, hged::main, extracting pos from variant position file using command: " << cmd << std::endl;
+    //   std::system(cmd.c_str());
+
+    // }
+
+
+
+
 
     
 }
@@ -73,7 +89,7 @@ int main(int argc, char **argv) {
 
   std::vector<int> variant_pos; 
   std::vector<int> samples; 
-  extract_pos_substring (parameters.vcffile, parameters.fasta_ref_file, parameters.pos_file, parameters.alpha, variant_pos, samples)
+  extract_pos_substring (parameters.vcffile, parameters.fasta_ref_file, parameters.pos_file, parameters.alpha, parameters.chr, variant_pos, samples)
   assert (std::is_sorted(variant_pos.begin(), variant_pos.end())); //must be sorted in ascending order
 
   //variant positions (unique values)
@@ -83,8 +99,9 @@ int main(int argc, char **argv) {
   pos_u.erase(std::unique(pos_u.begin(), pos_u.end()), pos_u.end() );
 
   std::cout<< "INFO, hged::main, count of variant containing positions = " << pos_u.size() << "\n";
-  std::cout<< "INFO, hged::main, count of indels = " << indelpos.size() << "\n";
-  std::cout<< "INFO, hged::main, count of SNP variants = " << std::accumulate(snpcount.begin(), snpcount.end(), 0) << "\n";
+  std::cout<< "INFO, hged::main, number of samples in the chromosome = " << samples.size() << "\n";
+
+  
 
   
   
