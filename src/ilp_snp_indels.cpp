@@ -56,7 +56,7 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
     {
       int col1;
 
-      std::istringstream iss(lin2);
+      std::istringstream iss(line2);
       iss >> col1;
       samples.push_back(col1);
     }
