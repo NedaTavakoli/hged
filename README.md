@@ -11,6 +11,10 @@
 ## Installation
 The above dependencies can be handled by running script `dependencies.sh`.
 
+### To use Gurobi:
+Get your free Gurobi academic license code by registering here: https://www.gurobi.com/downloads/end-user-license-agreement-academic"
+Add your licence key by using build/gurobi910/linux64/bin/grbgetkey tool"
+
 The overall workflow is:
 
 ```sh
@@ -19,10 +23,9 @@ cd hged
 project_dir=$(pwd)  #project top-level directory
 chr_id=22 #* change this numbers according to your needs
 alpha=150 #* change this numbers according to your needs
-ver=3.9  #* python version, change this numbers according to your needs
 # download data and softwares
 chmod +x dependencies.sh
-./dependencies.sh ${chr_id} ${ver}
+./dependencies.sh ${chr_id} 
 # cosntruct edge_labeled variation graph 
 chmod +x scripts/construct_graph.sh
 ./scripts/construct_graph.sh ${chr_id} ${alpha}
