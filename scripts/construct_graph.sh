@@ -33,6 +33,7 @@ cd ${DATA}
 mkdir -p graph_alpha_${alpha}
 graph=${DATA}/chr${id}_graph_alpha_${alpha}
 
+cd ${DATA}
 start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
 end=$(cat variant_positions_snps_indels_chr${id}.txt |tail -1)
 REF_end=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | tail -1 | awk '{print $2}')

@@ -121,4 +121,5 @@ $bcftools query -l chr${id}.vcf.gz > samples.txt
 num_samples=$(cat samples.txt | wc -l)
 num_haplotypes=$(($num_samples*2))
 echo 'Number of haplotypes:'$num_haplotypes
-echo "Looks like it went okay, now run  chmode +x ./scripts/construct_graph.sh && ./scripts/construct_graph.sh"
+cd ${project_dir}
+echo "Looks like it went okay, now run  chmode +x ./scripts/construct_graph.sh && ./scripts/construct_graph.sh ${chr_id} ${alpha}"
