@@ -44,9 +44,9 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
 
    // Extract samples from vcf file
     std::string tmp_file2 = ".hged." + std::to_string(random) + ".txt";
-    std::string cmd = std::string(TOSTRING(BCFTOOLSPATH)) + " -l " + vcf_file + " >  " + tmp_file2;
+    std::string cmd2 = std::string(TOSTRING(BCFTOOLSPATH)) + " -l " + vcf_file + " >  " + tmp_file2;
     std::cout << "INFO, hged::main, extracting pos from variant position file using command: " << cmd << std::endl;
-    std::system(cmd.c_str());
+    std::system(cmd2.c_str());
 
     std::ifstream file2 (tmp_file2);
     std::string line2;
@@ -99,7 +99,8 @@ int main(int argc, char **argv) {
   std::cout<< "INFO, hged::main, count of variant containing positions = " << pos_u.size() << "\n";
   std::cout<< "INFO, hged::main, number of samples in the chromosome = " << samples.size() << "\n";
 
-  
+  return 0;
+}
 
   
   
