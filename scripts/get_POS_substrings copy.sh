@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [ $# -eq 0 ];
 then
     echo "$0: Missing arguments"
@@ -15,24 +14,26 @@ else
     echo "List of arguments...: $@"
     echo "Arg #1 chrId (Ex: 22)..................................: $1"
     echo "Arg #2 alpha (leng of substring) ......................: $2"
-    echo "Arg #3 subrange .......................................: $3"
     echo "==========================="
 fi
 
 id=$1
 alpha=$2
-subrange=$3
 
 #cd ..  # TODO: UNCOMENT IN ON REPO
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)
-cd ../software
+cd ../build
 software_dir=$(pwd)
 bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
 cd ${DATA}
-subgraph=${DATA}/graph_alpha_${alpha}_subrange_${subrange}
+
+graph=${DATA}/chr${id}_graph_alpha_${alpha}
+
+id=22
+alpha=150
 
 MyVariants=chr${id}_snps_indels.vcf.gz
 ref=hs37d5
@@ -80,7 +81,7 @@ do
     # echo ${a[@]}
     uniq_s=$(printf "%s\n" "${a[@]}" | sort -u)
     echo $uniq_s
-done >> ${subgraph}/chr${id}_POS_substrings_len_${alpha}_subrange_${subrange}.txt
+done >> ${graph}/chr${id}_POS_substrings_len_${alpha}_2.txt
 
 
 

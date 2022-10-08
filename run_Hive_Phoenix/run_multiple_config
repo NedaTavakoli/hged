@@ -1,6 +1,6 @@
 # on phoenix
 module load anaconda3 gurobi
-export PYTHONPATH=$GUROBI_HOME/lib/python3.9_utf32:$PYTHONPATH
+export PYTHONPATH=$GUROBI_HOME/lib/python3.8_utf32:$PYTHONPATH
 cd /storage/coda1/p-saluru8/0/ntavakoli6/ed/src
 
 # on hive

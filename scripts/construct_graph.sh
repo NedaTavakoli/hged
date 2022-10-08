@@ -21,11 +21,11 @@ fi
 id=$1
 alpha=$2
 
-#cd ..  # **** TODO: UNCOMENT IN ON REPO
+cd ..  
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)
-cd ../software
+cd ../build
 software_dir=$(pwd)
 bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
@@ -40,7 +40,7 @@ REF_end=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | tail -1 | awk '{print $2}')
 len_REF_end=${#REF_end}
 t=$((${end}))
 min_last=$((len_REF_end<t? len_REF_end: t))
-end=$(($end+$min_last))
+end=$(($end+$min_last-1))
 $samtools faidx hs37d5.fa ${id}:${start}-${end} > ${graph}/linear_bc_chr${id}_alpha_${alpha}.fa
 REF_l=$(cat ${graph}/linear_bc_chr${id}_alpha_${alpha}.fa)
 leng=${#REF_l} 

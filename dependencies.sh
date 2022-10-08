@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# ***************************************************************************************
 if [ $# -eq 0 ];
 then
     echo "$0: Missing arguments"
@@ -15,11 +14,13 @@ else
     echo "Number of arguments.: $#"
     echo "List of arguments...: $@"
     echo "Arg #1 chrId (Ex: 22)..................................: $1"
+    echo "Arg #2 python version (Ex. 3.9)).......................: $2"
     echo "==========================="
 fi
 
 id=$1
-# ***************************************************************************************
+ver=$2
+
 project_dir=$(pwd)
 mkdir -p data && cd data
 DATA=$(pwd)
@@ -49,7 +50,7 @@ done
 # Download softwares
 cd ..
 project_dir=$(pwd)  #project top-level directory
-mkdir -p software && cd software
+mkdir -p build && cd build
 software_dir=$(pwd)
 
 # get bcftools
@@ -101,11 +102,13 @@ cd ${software_dir}
 wget  https://packages.gurobi.com/9.1/gurobi9.1.0_linux64.tar.gz
 tar xzf gurobi9.1.0_linux64.tar.gz
 cd gurobi910/linux64/
-GUROBI_HOME=$(pwd)
-python setup.py install #re-compile gurobi python files using user's python
-cp gurobi910/linux64/src/build/python3.9_utf32 gurobi910/linux64/lib
-export PYTHONPATH=$GUROBI_HOME/lib/python3.9_utf32:$PYTHONPATH
-gurobi=${software_dir}/gurobi910/linux64/lib/python3.9_utf32
+make -j -C gurobi910/linux64/src/build #re-compile gurobi cpp files using user's c++ compiler
+cp gurobi910/linux64/src/build/libgurobi_c++.a gurobi910/linux64/lib
+# GUROBI_HOME=$(pwd)
+# python setup.py install #re-compile gurobi python files using user's python
+# cp gurobi910/linux64/src/build/python${ver}_utf32 gurobi910/linux64/lib
+# export PYTHONPATH=$GUROBI_HOME/lib/python${ver}_utf32:$PYTHONPATH
+# gurobi=${software_dir}/gurobi910/linux64/lib/python${ver}_utf32
 rm -f "gurobi9.1.0_linux64.tar.gz"
 echo "gurobi download and compilation finished"
 
@@ -120,3 +123,4 @@ $bcftools query -l chr${id}.vcf.gz > samples.txt
 num_samples=$(cat samples.txt | wc -l)
 num_haplotypes=$(($num_samples*2))
 echo 'Number of haplotypes:'$num_haplotypes
+echo "Looks like it went okay, now run ./scripts/construct_graph.sh"

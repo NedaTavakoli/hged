@@ -10,9 +10,10 @@ cd hged
 project_dir=$(pwd)  #project top-level directory
 chr_id=22 #* change this numbers according to your needs
 alpha=150 #* change this numbers according to your needs
+ver=3.9  #* python version, change this numbers according to your needs
 # download data and softwares
 chmod +x dependencies.sh
-./dependencies.sh ${chr_id}
+./dependencies.sh ${chr_id} ${ver}
 # cosntruct edge_labeled variation graph 
 chmod +x scripts/construct_graph.sh
 ./scripts/construct_graph.sh ${chr_id} ${alpha}
@@ -33,7 +34,7 @@ at most delta errors (i.e., edit distance of delta among alpha-long substrings o
 The project has the following folder structure:
 ```
 hged
-|___script # scripts to extract data from genome graphs
+|___scripts # scripts to extract data from genome graphs
 |   |___construct_graph.sh # construct complete edge-labeled variation graph
 |   |___get_POS_substrings.sh # construct haplotypes substrings of length alpha for each variant position
 |
