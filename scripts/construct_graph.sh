@@ -21,9 +21,6 @@ fi
 id=$1
 alpha=$2
 
-id =22
-alpha=150 
-
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)
