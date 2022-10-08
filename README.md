@@ -14,12 +14,6 @@
 
 ## Installation
 The above dependencies can be handled by running script `dependencies.sh`.
-```sh
-git clone https://github.com/NedaTavakoli/hged
-cd VF
-./dependencies.sh
-make
-```
 
 The overall workflow is:
 
@@ -55,10 +49,11 @@ SYNOPSIS
 OPTIONS
         <alpha>     path length in variation graph (e.g., 500)
         <delta>     differences allowed (e.g., 10)
-        <file1>     uncompressed vcf file (something.vcf)
-        <file2>     filename to optionally save input and output variants
-        <id>        chromosome id (e.g., 1 or chr1), make it consistent with vcf file
-        --pos       set objective to minimize variation positions rather than variant count
+        <id>        chromosome id (e.g., 22), make it consistent with vcf file
+        <file1>     compressed vcf file (something.vcf.gz)
+        <file2>     reference genome fasta file (something.fa)
+        <file3>     variant position file for SNPs and INDELs (something.txt)
+        <file4>     filename to optionally save input and output variants
 ```
 
 This repository is used to solve variant selection in genome graphs under edit disatnce

@@ -25,7 +25,6 @@ inline bool exists (const std::string& filename) {
  */
 void parseandSave(int argc, char** argv, Parameters &param)
 {
-    param.pos = false; //default
 
   //define all arguments
   auto cli =
@@ -35,8 +34,8 @@ void parseandSave(int argc, char** argv, Parameters &param)
      clipp::required("-chr") & clipp::value("chr", param.chr).doc("choromosome id (e.g., 22), make it consistent with vcf file"),
      clipp::required("-vcf") & clipp::value("file1", param.vcffile).doc("compressed vcf file (contains only snps indels, output of running dependecies.sh) (something.vcf.gz)"),
      clipp::required("-fa") & clipp::value("file2", param.fasta_ref_file).doc("reference genome fasta file (something.fa)"),
-     clipp::required("-fa") & clipp::value("file2", param.pos).doc("reference genome fasta file (something.fa)"),
-     clipp::option("-prefix") & clipp::value("file3", param.prefix).doc("filename to optionally save input and output variants")
+     clipp::required("-pos") & clipp::value("file3", param.pos_file).doc("variant position file for SNPs and INDELs (something.txt)"),
+     clipp::option("-prefix") & clipp::value("file4", param.prefix).doc("filename to optionally save input and output variants")
     );
 
   if(!clipp::parse(argc, argv, cli))
@@ -51,13 +50,27 @@ void parseandSave(int argc, char** argv, Parameters &param)
   std::cout << "INFO, hged::parseandSave, chromosome id = " << param.chr << std::endl;
   std::cout << "INFO, hged::parseandSave, vcf file = " << param.vcffile << std::endl;
   std::cout << "INFO, hged::parseandSave, fasta file = " << param.fasta_ref_file << std::endl;
-  if (param.prefix.length() > 0) std::cout << "INFO, VF::parseandSave, prefix = " << param.prefix << std::endl;
+  std::cout << "INFO, hged::parseandSave, variant position file = " << param.pos_file << std::endl;
+  if (param.prefix.length() > 0) std::cout << "INFO, hged::parseandSave, prefix = " << param.prefix << std::endl;
 
   if (! exists(param.vcffile))
   {
     std::cerr << "ERROR, hged::parseandSave, vcf file cannot be opened" << std::endl;
     exit(1);
   }
+
+  if (! exists(param.fasta_ref_file))
+  {
+    std::cerr << "ERROR, hged::parseandSave, fasta file cannot be opened" << std::endl;
+    exit(1);
+  }
+
+  if (! exists(param.pos_file))
+  {
+    std::cerr << "ERROR, hged::parseandSave, variant position file cannot be opened" << std::endl;
+    exit(1);
+  }
+
 }
 
 /**
@@ -65,7 +78,6 @@ void parseandSave(int argc, char** argv, Parameters &param)
  */
 void parseandSave_ILP(int argc, char** argv, Parameters &param)
 {
-    param.pos = false; //default
 
   //define all arguments
   auto cli =
@@ -75,7 +87,8 @@ void parseandSave_ILP(int argc, char** argv, Parameters &param)
      clipp::required("-chr") & clipp::value("id", param.chr).doc("chromosome id (e.g., 22 ), make it consistent with vcf file"),
      clipp::required("-vcf") & clipp::value("file1", param.vcffile).doc("compressed vcf file (something.vcf.gz)"),
      clipp::required("-fa") & clipp::value("file2", param.fasta_ref_file).doc("reference genome fasta file (something.fa)"),
-     clipp::option("-prefix") & clipp::value("file3", param.prefix).doc("filename to optionally save input and output variants"),
+     clipp::required("-fa") & clipp::value("file3", param.pos_file).doc("variant position file for SNPs and INDELs (something.txt)"),
+     clipp::option("-prefix") & clipp::value("file4", param.prefix).doc("filename to optionally save input and output variants"),
     );
 
   if(!clipp::parse(argc, argv, cli))
@@ -90,6 +103,7 @@ void parseandSave_ILP(int argc, char** argv, Parameters &param)
   std::cout << "INFO, hged::parseandSave, chromosome id = " << param.chr << std::endl;
   std::cout << "INFO, hged::parseandSave, vcf file = " << param.vcffile << std::endl;
   std::cout << "INFO, hged::parseandSave, fasta file = " << param.fasta_ref_file << std::endl;
+  std::cout << "INFO, hged::parseandSave, variant position file = " << param.pos_file << std::endl;
   if (param.prefix.length() > 0) std::cout << "INFO, hged::parseandSave, prefix = " << param.prefix << std::endl;
 
   if (! exists(param.vcffile))
