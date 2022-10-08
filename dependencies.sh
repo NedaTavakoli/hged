@@ -4,7 +4,7 @@ if [ $# -eq 0 ];
 then
     echo "$0: Missing arguments"
     exit 1
-elif [ $# -gt 2 ];
+elif [ $# -gt 1 ];
 then
     echo "$0: Too many arguments: $@"
     exit 1
@@ -14,12 +14,10 @@ else
     echo "Number of arguments.: $#"
     echo "List of arguments...: $@"
     echo "Arg #1 chrId (Ex: 22)..................................: $1"
-    echo "Arg #2 python version (Ex. 3.9)).......................: $2"
     echo "==========================="
 fi
 
 id=$1
-ver=$2
 
 project_dir=$(pwd)
 mkdir -p data && cd data
