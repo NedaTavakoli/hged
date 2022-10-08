@@ -8,6 +8,7 @@ ssh ntavakoli6@login-phoenix-3.pace.gatech.edu
  qsub -I -q inferno -A GT-saluru8-CODA20 -l nodes=1:ppn=24,mem=100gb,walltime=96:00:00
 
 module load anaconda3 gurobi
+module laod 
 export PYTHONPATH=$GUROBI_HOME/lib/python3.8_utf32:$PYTHONPATH
 
 cd /storage/coda1/p-saluru8/0/ntavakoli6/

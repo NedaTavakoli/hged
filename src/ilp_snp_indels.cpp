@@ -43,8 +43,6 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
     }
 
    // Extract samples from vcf file
-   // seed random generator by time in seconds (this may create issue if two instances are launched at the same time)
-    srand(time(0)); int random = rand() % 100000;  
     std::string tmp_file2 = ".hged." + std::to_string(random) + ".txt";
     std::string cmd = std::string(TOSTRING(BCFTOOLSPATH)) + " -l " + vcf_file + " >  " + tmp_file2;
     std::cout << "INFO, hged::main, extracting pos from variant position file using command: " << cmd << std::endl;

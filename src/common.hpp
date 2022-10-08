@@ -88,7 +88,7 @@ void parseandSave_ILP(int argc, char** argv, Parameters &param)
      clipp::required("-vcf") & clipp::value("file1", param.vcffile).doc("compressed vcf file (something.vcf.gz)"),
      clipp::required("-fa") & clipp::value("file2", param.fasta_ref_file).doc("reference genome fasta file (something.fa)"),
      clipp::required("-pos") & clipp::value("file3", param.pos_file).doc("variant position file for SNPs and INDELs (something.txt)"),
-     clipp::option("-prefix") & clipp::value("file4", param.prefix).doc("filename to optionally save input and output variants"),
+     clipp::option("-prefix") & clipp::value("file4", param.prefix).doc("filename to optionally save input and output variants")
     );
 
   if(!clipp::parse(argc, argv, cli))
