@@ -11,6 +11,7 @@ struct Parameters
   int chr;
   std::string vcffile;
   std::string fasta_ref_file;
+  std::string pos_file;
   std::string prefix;
 };
 
@@ -34,6 +35,7 @@ void parseandSave(int argc, char** argv, Parameters &param)
      clipp::required("-chr") & clipp::value("chr", param.chr).doc("choromosome id (e.g., 22), make it consistent with vcf file"),
      clipp::required("-vcf") & clipp::value("file1", param.vcffile).doc("compressed vcf file (something.vcf.gz)"),
      clipp::required("-fa") & clipp::value("file2", param.fasta_ref_file).doc("reference genome fasta file (something.fa)"),
+     clipp::required("-fa") & clipp::value("file2", param.pos).doc("reference genome fasta file (something.fa)"),
      clipp::option("-prefix") & clipp::value("file3", param.prefix).doc("filename to optionally save input and output variants")
     );
 
