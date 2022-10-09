@@ -61,21 +61,26 @@ def remove_multiedges(G):
 def prune_alignment_graph(G, start_x, end, delta):
 
     # remove multi-edges keeping the ones with the lowest weight
-    G_no_dup = remove_multiedges(G)
+    #G_no_dup = remove_multiedges(G)
+    G_no_dup = G
 
     # keep only vertices reachable from starting vertex with path of weight at most delta
     # and reachable from end in G^R with path of weight at most delta
     # remove edges with weight 0
     path_lengths_from_front = nx.shortest_path_length(G_no_dup, source=start_x, weight=lambda _, __, d: d[0]['weight'])
-    path_lengths_from_end = nx.shortest_path_length(G_no_dup.reverse(), source=end, weight=lambda _, __, d: d[0]['weight'])
+    #path_lengths_from_end = nx.shortest_path_length(G_no_dup.reverse(), source=end, weight=lambda _, __, d: d[0]['weight'])
+
+    if path_lengths_from_front['end'] != 0:
+        return False
 
     reachable_from_front = [v for v in path_lengths_from_front if path_lengths_from_front[v] <= delta]
-    reachable_from_end = [v for v in path_lengths_from_end if path_lengths_from_end[v] <= delta]
+    #reachable_from_end = [v for v in path_lengths_from_end if path_lengths_from_end[v] <= delta]
 
     # take intersection of the two lists
-    V_a_pruned = list(set(reachable_from_front).intersection(reachable_from_end))
+    #V_a_pruned = list(set(reachable_from_front).intersection(reachable_from_end))
 
-    return nx.induced_subgraph(G_no_dup, V_a_pruned)
+    #return nx.induced_subgraph(G_no_dup, V_a_pruned)
+    return nx.induced_subgraph(G_no_dup, reachable_from_front)
 
 
 def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
@@ -143,6 +148,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     index_offset = num_variants
 
     # add sub-ILPs for each variant position
+    number_omitted = 0
     for i, pos in enumerate(locations):
         for S in substrings[i]:
 
@@ -157,13 +163,17 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
             G_a, start_v, end_v = create_alignment_graph(G_ind, pos, S)
             end3 = time.time()
             total_create_alignment_graph = end3 - start3
-            print('\tTime for createing alignment graph: ', total_create_alignment_graph)
+            print('\tTime for creating alignment graph: ', total_create_alignment_graph)
 
             start4 = time.time()
             G_a_pruned = prune_alignment_graph(G_a, start_v, end_v, delta)
             end4 = time.time()
             total_prune_alignment_graph = end4 - start4
             print('\tTime for prune alignment graph ', total_prune_alignment_graph)
+            if not G_a_pruned:
+                print('Omitting substring ' + str(S) + ' at location: ' + pos)
+                number_omitted += 1
+                continue
 
             start5 = time.time()
             model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)
@@ -191,6 +201,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     total_time_ILP = end - start
     print("Total time:", total_time_ILP)
 
+    print('Total number of substrings omitted: ', number_omitted)
     return model
 
 
@@ -223,7 +234,7 @@ def load_data(edges_file_name, location_substring_file_name):
 def construct_graph(E):
     G = nx.MultiDiGraph()
     for e in E:
-        # start, end, (symbol, variant #)
+        # start, end, symbol, variant #)
         G.add_edge(e[0], e[1], symbol=e[2], variant=e[3])
     return G
 
