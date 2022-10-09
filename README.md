@@ -1,4 +1,4 @@
-## Haplotype_aware Variation Selection in Genome Graphs under Edit Disatance
+## Haplotype_aware Variation Selection in Genome Graphs under Edit Distance
 
 ## Dependencies
 - A C++ compiler with c++11 support, e.g., GNU g++ (version 5+)
