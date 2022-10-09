@@ -89,25 +89,24 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       std::vector<std::string> vstrings(begin, end);
       // std::copy(vstrings.begin(), vstrings.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 
-      std::cout << "Print one element" << vstrings[9] << std::endl;
+      std::cout << "Print one element" << vstrings[9][2] << std::endl;
       std::vector<int> sample_index;
       for (std::size_t i = 9; i <= vstrings.size(); i++)
       {
         // std::cout << "Print one element" << vstrings[i] << std::endl;
         if (vstrings[i].compare("0|0") != 0)
         {
-          std::cout << "Sample index: " << i-9 << std::endl;
+          // std::cout << "Sample index: " << i-9 << std::endl;
           sample_index.push_back(i-9);
+
+          int h1 = vstrings[i][0];
+          std::cout << "First Haplotype: " << vstrings[i][0] << std::endl;
+          int h2 = vstrings[i][2];
+          std::cout << "Second Haplotype: " << vstrings[i][2]<< std::endl;
+
         }
 
-        int h1 = vstrings[i][0];
-        std::cout << "First Haplotype: " << h1 << std::endl;
-        int h2 = vstrings[i][2];
-        std::cout << "Second Haplotype: " << h2 << std::endl;
-
-        
-
-
+      
 
       }
 
