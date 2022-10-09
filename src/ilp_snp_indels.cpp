@@ -65,11 +65,10 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
    
    
 
-    // int i = 1;
-    // auto p1 = Popen({"bcftools ", "view ", "-H ", "-r ", std::to_string(chr), ":", std::to_string(i), vcf_file}, output{PIPE});
-    // auto p2 = Popen
-    // std::cout << "Data : " << obuf.buf.data() << std::endl;
-    // std::cout << "Data len: " << obuf.length << std::endl;
+    int i = 1;
+    auto p1 = sp::Popen({"bcftools ", "view ", "-H ", "-r ", std::to_string(chr), ":", std::to_string(i), vcf_file}, sp::output{PIPE});
+    std::cout << "Data : " << obuf.buf.data() << std::endl;
+    std::cout << "Data len: " << obuf.length << std::endl;
     
     std::cout << "Test::test_cat_pipe_redirection" << std::endl;
     auto p = sp::Popen({"cat", "-"}, sp::input{sp::PIPE}, sp::output{sp::PIPE});
