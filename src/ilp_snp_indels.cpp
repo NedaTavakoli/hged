@@ -62,45 +62,51 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       samples.push_back(col1);
     }
 
+    // for (std::size_t i = 1; i <= variant_pos.size(); i++)
+    // { 
+    int i =1;
    
-   
+      srand(time(0)); int random3 = rand() % 100000;  
+      std::string tmp_file3 = "pos_substrings_unsorted." + std::to_string(random3) + ".txt";
 
-    int i = 1;
-    auto p1 = sp::Popen({"bcftools ", "view ", "-H ", "-r ", std::to_string(chr), ":", std::to_string(i), vcf_file}, sp::output{sp::PIPE});
-    auto obuf = p1.communicate().first;
-    std::cout << "Data : " << obuf.buf.data() << std::endl;
-    std::cout << "Data len: " << obuf.length << std::endl;
-    
-    std::cout << "Test::test_cat_pipe_redirection" << std::endl;
-    auto p = sp::Popen({"cat", "-"}, sp::input{sp::PIPE}, sp::output{sp::PIPE});
-    auto msg = "through stdin to stdout";
-    auto res_buf = p.communicate(msg, strlen(msg)).first;
-    assert(res_buf.length == strlen(msg));
-    std::cout << "END_TEST" << std::endl;
+      std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view -H -r " + std::to_string(chr) + ":" + std::to_string(variant_pos[i]) + " " + vcf_file + " >  " + tmp_file3;
+      std::system(cmd3.c_str());
+
+      std::ifstream file3 (tmp_file3);
+      std::string line3;
+
+      std::vector<std::string> vecOfStrs;
+      while (std::getline(file3, line3))
+      {
+        std::istringstream ss(line3);
+        vecOfStrs.push_back(line3);
+      }
+
+      // split by space
+      std::stringstream ss(vecOfStrs[0]);
+      std::istream_iterator<std::string> begin(ss);
+      std::istream_iterator<std::string> end;
+      std::vector<std::string> vstrings(begin, end);
+      std::copy(vstrings.begin(), vstrings.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
+
+      std::cout << "Print one element" << vstrings[9] << std::endl;
+
+      // srand(time(0)); int random4 = rand() % 100000;  
+      // std::string tmp_file4 = "pos_substrings_grepped." + std::to_string(random4) + ".txt";
+
+      // std::string cmd4 = "cat  " + tmp_file3 + " | "+ "awk -F'\t'" + "'{split($0, header,'\t');}{for (i=10; i<=NF; i++) {if (gsub(/0'\'|1|1'\'|0|0'\'/1|1'\'/0/, "", $(i))==1) {printf header[i]'\t';printf i-10'\t'} if (i==NF) {printf '\n'}}}'" + " >  " + tmp_file4; 
+      // std::system(cmd4.c_str());
+      
 
 
-    // auto cat = sp::Popen({"cat", "../ext/subprocess.hpp"}, sp::output{PIPE});
-    // auto grep = sp::Popen({"grep", "template"}, sp::input{cat.output()}, sp::output{PIPE});
-    // auto cut = sp::Popen({"cut", "-d,", "-f", "1"}, sp::input{grep.output()}, sp::output{PIPE});
-    // auto res = cut.communicate().first;
-    // std::cout << res.buf.data() << std::endl;
-
-    //   int i =1;
-    //   //  arr=($($bcftools view -H -r 22:${v} chr${id}.vcf.gz| awk -F"\t" '{split($0, header, "\t");} \
-    //     {for (i=10; i<=NF; i++) {if (gsub(/0\|1|1\|0|0\/1|1\/0/, "", $(i))==1) {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))  
-    //   srand(time(0)); int random3 = rand() % 100000;  
-    //   std::string tmp_file3 = "pos_substrings_unsorted." + std::to_string(random3) + ".txt";
-
-    //   std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + " >  " + tmp_file3;
-    //   std::system(cmd3.c_str());
-
-      // std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + \
+      
+      // std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + \
       //   '|' + "awk -F'\t' '{split($0, header,'\t');} \
       //    {for (i=10; i<=NF; i++) {if (gsub(/0'\'|1|1'\'|0|0'\'/1|1'\'/0/, "", $(i))==1) {printf header[i]'\t';printf i-10'\t'} if (i==NF) {printf '\n'}}}'" + " >  " + tmp_file3;
       // std::system(cmd3.c_str());
 
     
- 
+ //}
 }
 
 int main(int argc, char **argv) {
