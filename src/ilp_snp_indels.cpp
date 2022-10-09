@@ -71,14 +71,17 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
     // std::cout << "Data : " << obuf.buf.data() << std::endl;
     // std::cout << "Data len: " << obuf.length << std::endl;
      
+  auto p = sp::Popen({"ls", "-l"}, sp::output{PIPE});
+  auto obuf = p.communicate().first;
+  std::cout << "Data : " << obuf.buf.data() << std::endl;
+  std::cout << "Data len: " << obuf.length << std::endl;
 
 
-
-    auto cat = sp::Popen({"cat", "../ext/subprocess.hpp"}, sp::output{PIPE});
-    auto grep = sp::Popen({"grep", "template"}, sp::input{cat.output()}, sp::output{PIPE});
-    auto cut = sp::Popen({"cut", "-d,", "-f", "1"}, sp::input{grep.output()}, sp::output{PIPE});
-    auto res = cut.communicate().first;
-    std::cout << res.buf.data() << std::endl;
+    // auto cat = sp::Popen({"cat", "../ext/subprocess.hpp"}, sp::output{PIPE});
+    // auto grep = sp::Popen({"grep", "template"}, sp::input{cat.output()}, sp::output{PIPE});
+    // auto cut = sp::Popen({"cut", "-d,", "-f", "1"}, sp::input{grep.output()}, sp::output{PIPE});
+    // auto res = cut.communicate().first;
+    // std::cout << res.buf.data() << std::endl;
 
     //   int i =1;
     //   //  arr=($($bcftools view -H -r 22:${v} chr${id}.vcf.gz| awk -F"\t" '{split($0, header, "\t");} \
