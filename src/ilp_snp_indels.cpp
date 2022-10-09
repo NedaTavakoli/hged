@@ -91,19 +91,36 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
 
       std::cout << "Print one element" << vstrings[9][2] << std::endl;
       std::vector<int> sample_index;
-      for (std::size_t i = 9; i <= vstrings.size(); i++)
+      
+      for (std::size_t j = 9; j <= vstrings.size(); j++)
       {
         // std::cout << "Print one element" << vstrings[i] << std::endl;
-        if (vstrings[i].compare("0|0") != 0)
+        if (vstrings[j].compare("0|0") != 0)
         {
-          // std::cout << "Sample index: " << i-9 << std::endl;
-          sample_index.push_back(i-9);
+          // std::cout << "Sample index: " << j-9 << std::endl;
+          sample_index.push_back(j-9);
+         
+          // h1 = vstrings[i][0];
+          std::cout << "First Haplotype: " <<  vstrings[j][0] << std::endl;
+          // h2 = vstrings[i][2];
+          std::cout << "Second Haplotype: " << vstrings[j][2]<< std::endl;
 
-          int h1 = vstrings[i][0];
-          std::cout << "First Haplotype: " << vstrings[i][0] << std::endl;
-          int h2 = vstrings[i][2];
-          std::cout << "Second Haplotype: " << vstrings[i][2]<< std::endl;
+          if ( vstrings[j][0] !=0)
+          {  int t = j + alpha -1;
+            
+            srand(time(0)); int random4 = rand() % 100000;  
+            std::string tmp_file4 = "pfff." + std::to_string(random4) + ".txt";
+            // substring1=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha})) | $bcftools consensus -s ${sample} -H 1 ${MyVariants}))
+            std::string cmd4 = std::string(TOSTRING(SAMTOOLSPATH)) + " faidx " + fasta_file + ":" + std::to_string(chr) + ":" + std::to_string(i)+"-"+ std::to_string(t)+ " >  " + tmp_file4;
+            std::system(cmd4.c_str());
+          }
 
+
+          // if ( vstrings[i][2] !=0)
+          // {
+            
+          // }
+          
         }
 
       
