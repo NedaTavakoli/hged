@@ -17,7 +17,7 @@
 #include "ext/subprocess.hpp"
 
 /********* Helper functions ******/
-// using namespace subprocess;
+using namespace subprocess;
 
 
 /**
