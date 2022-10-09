@@ -10,7 +10,6 @@
 #include <numeric>
 #include <cassert>
 #include <unordered_map>
-#include <pstream.h>
 #include "ext/prettyprint.hpp"
 #include "common.hpp"
 #include <boost/graph/graph_traits.hpp>
@@ -64,13 +63,14 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
     }
 
    
-    using subprocess::command;
-    std::string input{"1\n2\n3\n4"};
-    (command{"head", "-n2"} < input > "foo").run(); // Prints 1\n2 in a file named foo
+   
 
-
-    // auto bcftools_view = Popen({"bcftools ", "view ", "-H ", ""-r "", }, output{PIPE});
-    // auto grep = Popen({"grep", "template"}, input{cat.output()}, output{PIPE});
+    i = 1;
+    auto p = Popen({"bcftools ", "view ", "-H ", ""-r "", std::to_string(chr),":",std::to_string(i),vcf_file}, output{PIPE});
+    auto obuf = p.communicate().first;
+    std::cout << "Data : " << obuf.buf.data() << std::endl;
+    std::cout << "Data len: " << obuf.length << std::endl;
+        // auto grep = Popen({"grep", "template"}, input{cat.output()}, output{PIPE});
     // auto cut = Popen({"cut", "-d,", "-f", "1"}, input{grep.output()}, output{PIPE});
     // auto res = cut.communicate().first;
     // std::cout << res.buf.data() << std::endl;
