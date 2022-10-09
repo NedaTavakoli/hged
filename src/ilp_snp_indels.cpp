@@ -17,7 +17,7 @@
 #include "ext/subprocess.hpp"
 
 /********* Helper functions ******/
-using namespace subprocess;
+namespace sp = subprocess;
 
 
 /**
@@ -74,9 +74,9 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
 
 
 
-    auto cat = Popen({"cat", "../ext/subprocess.hpp"}, output{PIPE});
-    auto grep = Popen({"grep", "template"}, input{cat.output()}, output{PIPE});
-    auto cut = Popen({"cut", "-d,", "-f", "1"}, input{grep.output()}, output{PIPE});
+    auto cat = sp::Popen({"cat", "../ext/subprocess.hpp"}, sp::output{PIPE});
+    auto grep = sp::Popen({"grep", "template"}, sp::input{cat.output()}, sp::output{PIPE});
+    auto cut = sp::Popen({"cut", "-d,", "-f", "1"}, sp::input{grep.output()}, sp::output{PIPE});
     auto res = cut.communicate().first;
     std::cout << res.buf.data() << std::endl;
 
