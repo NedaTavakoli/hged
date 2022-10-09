@@ -17,7 +17,7 @@
 #include "ext/subprocess.hpp"
 
 /********* Helper functions ******/
-using namespace subprocess;
+namespace sp = subprocess;
 
 
 /**
@@ -71,10 +71,12 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
     // std::cout << "Data : " << obuf.buf.data() << std::endl;
     // std::cout << "Data len: " << obuf.length << std::endl;
     
-    auto p = Popen({"ls", "-l"}, output{PIPE});
-    auto obuf = p.communicate().first;
-    std::cout << "Data : " << obuf.buf.data() << std::endl;
-    std::cout << "Data len: " << obuf.length << std::endl;
+    std::cout << "Test::test_cat_pipe_redirection" << std::endl;
+    auto p = sp::Popen({"cat", "-"}, sp::input{sp::PIPE}, sp::output{sp::PIPE});
+    auto msg = "through stdin to stdout";
+    auto res_buf = p.communicate(msg, strlen(msg)).first;
+    assert(res_buf.length == strlen(msg));
+    std::cout << "END_TEST" << std::endl;
 
 
     // auto cat = sp::Popen({"cat", "../ext/subprocess.hpp"}, sp::output{PIPE});
