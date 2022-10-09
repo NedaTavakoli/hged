@@ -12,10 +12,8 @@
 #include <unordered_map>
 #include "ext/prettyprint.hpp"
 #include "common.hpp"
-#include "boost/process.hpp"
 #include "gurobi_c++.h"
 
-namespace bp = boost::process;
 /********* Helper functions ******/
 
 /**
