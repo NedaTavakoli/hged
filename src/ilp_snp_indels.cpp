@@ -12,9 +12,12 @@
 #include <unordered_map>
 #include "ext/prettyprint.hpp"
 #include "common.hpp"
+#include <boost/graph/graph_traits.hpp>
 #include "gurobi_c++.h"
+#inlcude "ext/subprocess.hpp"
 
 /********* Helper functions ******/
+// using namespace subprocess;
 
 /**
  * @brief   Extract substrings of length alpha at each variant position. 
@@ -44,7 +47,7 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
    // Extract samples from vcf file
     std::string tmp_file2 = ".hged." + std::to_string(random) + ".txt";
     std::string cmd2 = std::string(TOSTRING(BCFTOOLSPATH)) + " query -l " + vcf_file + " >  " + tmp_file2;
-    std::cout << "INFO, hged::main, extracting pos from variant position file using command: " << cmd << std::endl;
+    std::cout << "INFO, hged::main, extracting samples from vcf file using command: " << cmd2 << std::endl;
     std::system(cmd2.c_str());
 
     std::ifstream file2 (tmp_file2);
@@ -68,7 +71,6 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       // std::string cmd4 = " awk -F\"t\" ;
       
      
-      std::cout << "INFO, hged::main, extracting pos from variant position file using command: " << cmd << std::endl;
       std::system(cmd3.c_str());
 
     //   std::ifstream file3 (tmp_file3);
