@@ -77,32 +77,6 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       // std::system(cmd3.c_str());
 
     
-
-    // for (std::size_t i = 0; i < variant_pos.size(); i++)
-    // {
-    //   //  arr=($($bcftools view -H -r 22:${v} chr${id}.vcf.gz| awk -F"\t" '{split($0, header, "\t");} \
-    //     {for (i=10; i<=NF; i++) {if (gsub(/0\|1|1\|0|0\/1|1\/0/, "", $(i))==1) {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))  
-    //   srand(time(0)); int random3 = rand() % 100000;  
-    //   std::string tmp_file3 = "hged." + std::to_string(random3) + ".txt";
-    //   std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + \
-    //     '|' + "awk -F'\t' '{split($0, header, '\t');} \
-    //      {for (i=10; i<=NF; i++) {if (gsub(/0'\'|1|1'\'|0|0'\'/1|1'\'/0/, "", $(i))==1) {printf header[i]'\t';printf i-10'\t'} if (i==NF) {printf '\n'}}}'" + " >  " + tmp_file3;
-    //   std::system(cmd3.c_str());
-
-    // //   std::ifstream file3 (tmp_file3);
-    // //   std::string line3;
-    // //   while (std::getline(file3, line3))
-    // //   {
-    // //     int col1;
-    // //     std::string col2; 
-    // //     std::istringstream iss(line3); // used to separate each element in the line
-    // //     iss >> col1 >> col2;
-    // //     //samples.push_back(col1);
-    // // }
-
-
-
-    // }
  
 }
 
