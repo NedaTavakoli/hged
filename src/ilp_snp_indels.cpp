@@ -14,7 +14,7 @@
 #include "common.hpp"
 #include <boost/graph/graph_traits.hpp>
 #include "gurobi_c++.h"
-#inlcude "ext/subprocess.hpp"
+#include "ext/subprocess.hpp"
 
 /********* Helper functions ******/
 // using namespace subprocess;
