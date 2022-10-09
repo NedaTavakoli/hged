@@ -10,6 +10,7 @@
 #include <numeric>
 #include <cassert>
 #include <unordered_map>
+#include <pstream.h>
 #include "ext/prettyprint.hpp"
 #include "common.hpp"
 #include <boost/graph/graph_traits.hpp>
@@ -18,6 +19,7 @@
 
 /********* Helper functions ******/
 // using namespace subprocess;
+
 
 /**
  * @brief   Extract substrings of length alpha at each variant position. 
@@ -61,15 +63,27 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       samples.push_back(col1);
     }
 
+   
+    using subprocess::command;
+    std::string input{"1\n2\n3\n4"};
+    (command{"head", "-n2"} < input > "foo").run(); // Prints 1\n2 in a file named foo
 
-      int i =1;
-      //  arr=($($bcftools view -H -r 22:${v} chr${id}.vcf.gz| awk -F"\t" '{split($0, header, "\t");} \
-        {for (i=10; i<=NF; i++) {if (gsub(/0\|1|1\|0|0\/1|1\/0/, "", $(i))==1) {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))  
-      srand(time(0)); int random3 = rand() % 100000;  
-      std::string tmp_file3 = "pos_substrings_unsorted." + std::to_string(random3) + ".txt";
 
-      std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + " >  " + tmp_file3;
-      std::system(cmd3.c_str());
+    // auto bcftools_view = Popen({"bcftools ", "view ", "-H ", ""-r "", }, output{PIPE});
+    // auto grep = Popen({"grep", "template"}, input{cat.output()}, output{PIPE});
+    // auto cut = Popen({"cut", "-d,", "-f", "1"}, input{grep.output()}, output{PIPE});
+    // auto res = cut.communicate().first;
+    // std::cout << res.buf.data() << std::endl;
+
+
+    //   int i =1;
+    //   //  arr=($($bcftools view -H -r 22:${v} chr${id}.vcf.gz| awk -F"\t" '{split($0, header, "\t");} \
+    //     {for (i=10; i<=NF; i++) {if (gsub(/0\|1|1\|0|0\/1|1\/0/, "", $(i))==1) {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))  
+    //   srand(time(0)); int random3 = rand() % 100000;  
+    //   std::string tmp_file3 = "pos_substrings_unsorted." + std::to_string(random3) + ".txt";
+
+    //   std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + " >  " + tmp_file3;
+    //   std::system(cmd3.c_str());
 
       // std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view  -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + \
       //   '|' + "awk -F'\t' '{split($0, header,'\t');} \
