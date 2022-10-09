@@ -20,7 +20,6 @@
  * @brief   Extract substrings of length alpha at each variant position. 
  *          This function outputs substrings of length alpha at each variant position.
  */
-
 void extract_pos_substring (const std::string &vcf_file, const std::string &fasta_file, const std::string &pos_file, const int &alpha, const int &chr, std::vector<int> &variant_pos, std::vector<int> &samples)
 {
    // Extract variant positions from variant position file
@@ -71,12 +70,7 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
     //   std::system(cmd.c_str());
 
     // }
-
-
-
-
-
-    
+ 
 }
 
 int main(int argc, char **argv) {
@@ -87,7 +81,7 @@ int main(int argc, char **argv) {
 
   std::vector<int> variant_pos; 
   std::vector<int> samples; 
-  extract_pos_substring (parameters.vcffile, parameters.fasta_ref_file, parameters.pos_file, parameters.alpha, parameters.chr, variant_pos, samples)
+  extract_pos_substring (parameters.vcffile, parameters.fasta_ref_file, parameters.pos_file, parameters.alpha, parameters.chr, variant_pos, samples);
   assert (std::is_sorted(variant_pos.begin(), variant_pos.end())); //must be sorted in ascending order
 
   //variant positions (unique values)
