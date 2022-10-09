@@ -66,7 +66,8 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
    
 
     int i = 1;
-    auto p1 = sp::Popen({"bcftools ", "view ", "-H ", "-r ", std::to_string(chr), ":", std::to_string(i), vcf_file}, sp::output{PIPE});
+    auto p1 = sp::Popen({"bcftools ", "view ", "-H ", "-r ", std::to_string(chr), ":", std::to_string(i), vcf_file}, sp::output{sp::PIPE});
+    auto obuf = p1.communicate().first;
     std::cout << "Data : " << obuf.buf.data() << std::endl;
     std::cout << "Data len: " << obuf.length << std::endl;
     
