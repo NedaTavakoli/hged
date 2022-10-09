@@ -43,7 +43,7 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
 
    // Extract samples from vcf file
     std::string tmp_file2 = ".hged." + std::to_string(random) + ".txt";
-    std::string cmd2 = std::string(TOSTRING(BCFTOOLSPATH)) + "query -l " + vcf_file + " >  " + tmp_file2;
+    std::string cmd2 = std::string(TOSTRING(BCFTOOLSPATH)) + " query -l " + vcf_file + " >  " + tmp_file2;
     std::cout << "INFO, hged::main, extracting pos from variant position file using command: " << cmd << std::endl;
     std::system(cmd2.c_str());
 
