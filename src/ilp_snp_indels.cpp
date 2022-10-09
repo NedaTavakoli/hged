@@ -87,24 +87,32 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
       std::istream_iterator<std::string> begin(ss);
       std::istream_iterator<std::string> end;
       std::vector<std::string> vstrings(begin, end);
-      std::copy(vstrings.begin(), vstrings.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
+      // std::copy(vstrings.begin(), vstrings.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 
       std::cout << "Print one element" << vstrings[9] << std::endl;
+      std::vector<int> sample_index;
+      for (std::size_t i = 9; i <= vstrings.size(); i++)
+      {
+        // std::cout << "Print one element" << vstrings[i] << std::endl;
+        if (vstrings[i].compare("0|0") != 0)
+        {
+          std::cout << "Sample index: " << i-9 << std::endl;
+          sample_index.push_back(i-9);
+        }
 
-      // srand(time(0)); int random4 = rand() % 100000;  
-      // std::string tmp_file4 = "pos_substrings_grepped." + std::to_string(random4) + ".txt";
+        int h1 = vstrings[i][0];
+        std::cout << "First Haplotype: " << h1 << std::endl;
+        int h2 = vstrings[i][2];
+        std::cout << "Second Haplotype: " << h2 << std::endl;
 
-      // std::string cmd4 = "cat  " + tmp_file3 + " | "+ "awk -F'\t'" + "'{split($0, header,'\t');}{for (i=10; i<=NF; i++) {if (gsub(/0'\'|1|1'\'|0|0'\'/1|1'\'/0/, "", $(i))==1) {printf header[i]'\t';printf i-10'\t'} if (i==NF) {printf '\n'}}}'" + " >  " + tmp_file4; 
-      // std::system(cmd4.c_str());
-      
+        
 
 
-      
-      // std::string cmd3 = std::string(TOSTRING(BCFTOOLSPATH)) + " view -H -r " + std::string(TOSTRING(chr)) + ":" + std::string(TOSTRING(variant_pos[i])) + " " + vcf_file + \
-      //   '|' + "awk -F'\t' '{split($0, header,'\t');} \
-      //    {for (i=10; i<=NF; i++) {if (gsub(/0'\'|1|1'\'|0|0'\'/1|1'\'/0/, "", $(i))==1) {printf header[i]'\t';printf i-10'\t'} if (i==NF) {printf '\n'}}}'" + " >  " + tmp_file3;
-      // std::system(cmd3.c_str());
 
+      }
+
+   
+    
     
  //}
 }
