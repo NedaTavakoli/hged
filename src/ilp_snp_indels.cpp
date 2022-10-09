@@ -47,7 +47,7 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
    // Extract samples from vcf file
     std::string tmp_file2 = ".hged." + std::to_string(random) + ".txt";
     std::string cmd2 = std::string(TOSTRING(BCFTOOLSPATH)) + " query -l " + vcf_file + " >  " + tmp_file2;
-    std::cout << "INFO, hged::main, extracting samples from vcf file using command: " << cmd2 << std::endl;
+    // std::cout << "INFO, hged::main, extracting samples from vcf file using command: " << cmd2 << std::endl;
     std::system(cmd2.c_str());
 
     std::ifstream file2 (tmp_file2);
@@ -72,14 +72,13 @@ void extract_pos_substring (const std::string &vcf_file, const std::string &fast
          {for (i=10; i<=NF; i++) {if (gsub(/0'\'|1|1'\'|0|0'\'/1|1'\'/0/, "", $(i))==1) {printf header[i]',';printf i-10'\t'} if (i==NF) {printf '\n'}}}'" + " >  " + tmp_file3;
       std::system(cmd3.c_str());
 
-
     //   std::ifstream file3 (tmp_file3);
     //   std::string line3;
     //   while (std::getline(file3, line3))
     //   {
     //     int col1;
     //     std::string col2; 
-    //     std::istringstream iss(line2);
+    //     std::istringstream iss(line3); // used to separate each element in the line
     //     iss >> col1 >> col2;
     //     //samples.push_back(col1);
     // }
