@@ -41,9 +41,7 @@ start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
 end=$(cat variant_positions_snps_indels_chr${id}.txt |tail -1)
 REF_end=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | tail -1 | awk '{print $2}')
 len_REF_end=${#REF_end}
-t=$((${alpha}))
-min_last=$((len_REF_end<t? len_REF_end: t))
-end=$(($end+$min_last))
+end=$(($end+$len_REF_end))
 $samtools faidx hs37d5.fa ${id}:${start}-${end} > ${graph}/linear_bc_chr${id}_alpha_${alpha}.fa
 REF_l=$($samtools faidx hs37d5.fa ${id}:${start}-${end} |  sed '1d' | tr -d "[:space:]") # remove the first linea and remove whitespaces
 leng=$(echo ${REF_l[@]} | wc -c)
