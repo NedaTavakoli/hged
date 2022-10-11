@@ -23,7 +23,8 @@ alpha=$2
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)
-cd ../build  
+cd ../build
+# cd ../software 
 software_dir=$(pwd)
 bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
@@ -42,8 +43,8 @@ samples=($($bcftools query -l chr${id}.vcf.gz)) # array of samples, index from 0
 for v in "${variant_positions[@]}"
 do
     a=($v)
-    arr=$($bcftools view -H -r 22:${v} chr${id}_snps_indels.vcf.gz |  awk -F"\t" '{split($0, header, "\t");} \
-        {for (i=10; i<=NF; i++) {if ((gsub(/0\|0|0\/0|/, "", $(i)) !=1))  {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}') 
+    arr=($($bcftools view -H -r 22:${v} chr${id}_snps_indels.vcf.gz |  awk -F"\t" '{split($0, header, "\t");} \
+        {for (i=10; i<=NF; i++) {if ((gsub(/0\|0|0\/0|/, "", $(i)) !=1))  {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}'))
 
     for gt in "${arr[@]}"
     do
