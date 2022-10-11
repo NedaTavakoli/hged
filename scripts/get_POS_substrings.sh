@@ -29,6 +29,10 @@ bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
 cd ${DATA}
 
+mkdir -p chr${id}_graph_alpha_${alpha}
+graph=${DATA}/chr${id}_graph_alpha_${alpha}
+graph=$(echo $graph| tr -d '\r') # remove -r from the directory
+
 MyVariants=chr${id}_snps_indels.vcf.gz
 ref=hs37d5
 variant_positions=($(cut -d ',' -f2 variant_positions_snps_indels_chr${id}.txt))
@@ -49,7 +53,7 @@ do
         sample_index=${gt:4:5}
         sample=${samples[sample_index]}
         if [ ${h1} -ne 0 ]; then
-            substring1=$($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1 ${MyVariants})
+            substring1=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 1 ${MyVariants}))
             s1=''
             for i in "${substring1[@]:1}"
             do
@@ -61,7 +65,7 @@ do
             a+=(${s1:0:min_v1})
         fi
         if [ ${h2} -ne 0 ]; then
-            substring2=$($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 2 ${MyVariants})
+            substring2=($($samtools faidx ${ref}.fa ${id}:${v}-$((${v} + ${alpha}-1)) | $bcftools consensus -s ${sample} -H 2 ${MyVariants}))
             s2=''
             for i in "${substring2[@]:1}"
             do
@@ -73,10 +77,10 @@ do
             a+=(${s2:0:min_v2})
         fi
     done
-    echo ${a[@]}
+    # echo ${a[@]}
     uniq_s=$(printf "%s\n" "${a[@]}" | sort -u)
     echo $uniq_s
-done >> chr${id}_POS_substrings_len_${alpha}.txt
+done >> ${graph}/chr${id}_POS_substrings_len_${alpha}.txt
 
 
 
