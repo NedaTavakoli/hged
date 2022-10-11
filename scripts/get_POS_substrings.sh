@@ -36,7 +36,7 @@ graph=$(echo $graph| tr -d '\r') # remove -r from the directory
 MyVariants=chr${id}_snps_indels.vcf.gz
 ref=hs37d5
 variant_positions=($(cut -d ',' -f2 variant_positions_snps_indels_chr${id}.txt))
-samples=($($bcftools query -l chr${id}.vcf.gz)) # array of samples, index from 0
+samples=($($bcftools query -l chr${id}_snps_indels.vcf.gz)) # array of samples, index from 0
 
 # For each variant position 
 for v in "${variant_positions[@]}"
