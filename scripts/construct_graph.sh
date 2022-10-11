@@ -24,8 +24,8 @@ alpha=$2
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)
-cd ../build
-# cd ../software
+# cd ../build
+cd ../software
 software_dir=$(pwd)
 bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
@@ -36,6 +36,7 @@ graph=${DATA}/chr${id}_graph_alpha_${alpha}
 graph=$(echo $graph| tr -d '\r') # remove -r from the directory
 
 cd ${DATA}
+
 start=$(cat variant_positions_snps_indels_chr${id}.txt | head -1)
 end=$(cat variant_positions_snps_indels_chr${id}.txt |tail -1)
 REF_end=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | tail -1 | awk '{print $2}')
@@ -43,7 +44,7 @@ len_REF_end=${#REF_end}
 t=$((${end}))
 min_last=$((len_REF_end<t? len_REF_end: t))
 end=$(($end+$min_last-1))
-
+$samtools faidx hs37d5.fa ${id}:${start}-${end} > ${graph}/linear_bc_chr${id}_alpha_${alpha}.fa
 REF_l=$($samtools faidx hs37d5.fa ${id}:${start}-${end} |  sed '1d' | tr -d "[:space:]") # remove the first linea and remove whitespaces
 leng=$(echo ${REF_l[@]} | wc -c)
 # echo ${REF_l:0:20}
