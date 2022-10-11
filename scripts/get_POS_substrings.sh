@@ -37,7 +37,6 @@ samples=($($bcftools query -l chr${id}.vcf.gz)) # array of samples, index from 0
 # For each variant position 
 for v in "${variant_positions[@]}"
 do
-    v=16050075    
     a=($v)
     arr=$($bcftools view -H -r 22:${v} chr${id}_snps_indels.vcf.gz |  awk -F"\t" '{split($0, header, "\t");} \
         {for (i=10; i<=NF; i++) {if ((gsub(/0\|0|0\/0|/, "", $(i)) !=1))  {printf header[i]",";printf i-10"\t"} if (i==NF) {printf "\n"}}}') 
