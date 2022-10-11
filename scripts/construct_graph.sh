@@ -46,7 +46,7 @@ $samtools faidx hs37d5.fa ${id}:${start}-${end} > ${graph}/linear_bc_chr${id}_al
 REF_l=$(cat ${graph}/linear_bc_chr${id}_alpha_${alpha}.fa)
 leng=${#REF_l} 
 num_vertice_linear_bc=$((${leng}+1))
-num_alt_vertices=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | awk ' length($3)>1'| awk '{sum_1 = 0; t = split($3, arr, ","); for(i = 1; i <= t; i++) sum+=(length(arr[i])-1);print sum}' | awk '{ sum += $1 } END { print sum }')
+num_alt_vertices=$(cat chr${id}_snps_indel_POS_REF_ALT.txt | awk ' length($3)>1'| awk '{sum = 0; t = split($3, arr, ","); for(i = 1; i <= t; i++) sum+=(length(arr[i])-1);print sum}' | awk '{ sum += $1 } END { print sum }')
 Total_vertices=$(($num_vertice_linear_bc + $num_alt_vertices))
 e=$(($start+ $Total_vertices))
 seq $start $e > ${graph}/chr${id}_vertices_alpha_${alpha}.txt
