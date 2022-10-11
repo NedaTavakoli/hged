@@ -63,7 +63,6 @@ linear_edges=chr${id}_linear_edges_alpha_${alpha}.txt
 alt_edges=chr${id}_alt_edges2_alpha_${alpha}.txt
 
 
-
 cd ../src
 python get_edges_chr.py ${start} ${end} ${num_vertice_linear_bc}\
     ${DATA}/${variant_pos_file} ${DATA}/${variant_POS_ALT_REF_file} ${graph}/${linear_bc_file}\
@@ -73,3 +72,5 @@ cat chr${id}_linear_edges_alpha_${alpha}.txt chr${id}_alt_edges2_alpha_${alpha}.
 
 rm chr${id}_linear_edges_alpha_${alpha}.txt 
 rm chr${id}_alt_edges2_alpha_${alpha}.txt
+
+
