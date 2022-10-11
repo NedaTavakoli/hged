@@ -8,8 +8,8 @@ variant_positions=($(cut -f2 chr${id}_snps_indel_POS_REF_ALT.txt))
 samples=($(bcftools query -l chr${id}_snps_indels.vcf.gz)) # array of samples, index from 0
 
 # For each variant position 
-for v in "${variant_positions[@]}"
-#for v in "${variant_positions:0:10}" # specify a range of variant position just for testing
+#for v in "${variant_positions[@]}"
+for v in "${variant_positions:0:499}" # specify a range of variant position just for testing
 do
     a=($v)
     arr=($(bcftools view -H -r 22:${v} chr${id}_snps_indels.vcf.gz |  awk -F"\t" '{split($0, header, "\t");} \
