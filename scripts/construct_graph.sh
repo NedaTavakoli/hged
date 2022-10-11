@@ -24,8 +24,8 @@ alpha=$2
 project_dir=$(pwd)
 cd data
 DATA=$(pwd)
-# cd ../build
-cd ../software
+cd ../build
+# cd ../software
 software_dir=$(pwd)
 bcftools=${software_dir}/bcftools-1.9/bcftools
 samtools=${software_dir}/samtools-1.12/samtools
