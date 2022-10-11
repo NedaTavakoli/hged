@@ -102,7 +102,7 @@ if __name__ == "__main__":
     id= int(sys.argv[7])
     linear_edges=sys.argv[8]
     alt_edges=sys.argv[9]
-    print('Creating list of vertices...')
+    print('Creating list of edges...')
 
     create_edges(start, end, num_vertice_linear_bc, variant_pos_file,\
          variant_POS_ALT_REF_file, linear_bc_file, id, linear_edges, alt_edges)
