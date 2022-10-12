@@ -28,7 +28,8 @@ def create_alignment_graph(G, start_v, S):
 
             # add matching / sub edge
             for e in G.edges(data=True):
-                G_A.add_edge(e[0] + "." + str(i), e[1] + "." + str(i+1), weight=(0 if S[i] == e[2]['symbol'] else 1), variant=e[2]['variant'])
+                G_A.add_edge(e[0] + "." + str(i), e[1] + "." + str(i+1),
+                             weight=(0 if S[i] == e[2]['symbol'] else 1), variant=e[2]['variant'])
 
     # add edges to sink
     for v in G.nodes:
@@ -61,8 +62,8 @@ def remove_multiedges(G):
 def prune_alignment_graph(G, start_x, end, delta):
 
     # remove multi-edges keeping the ones with the lowest weight
-    #G_no_dup = remove_multiedges(G)
-    G_no_dup = G
+    G_no_dup = remove_multiedges(G)
+    #G_no_dup = G
 
     # keep only vertices reachable from starting vertex with path of weight at most delta
     # and reachable from end in G^R with path of weight at most delta
@@ -132,6 +133,8 @@ def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
         if e[2]['variant'] != '-':
             lhs = gp.LinExpr(0)
             lhs += y[e[2]['index']] + global_var[int(e[2]['variant'])]
+            #lhs += y[e[2]['index']]
+            #print(variant, int(e[2]['variant']))
             model.addConstr(lhs <= 1)
 
     return model
@@ -144,7 +147,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
     model = gp.Model()
 
     # add global variables
-    global_var = model.addVars(range(1, number_variants+1), vtype=gp.GRB.BINARY)
+    global_var = model.addVars(range(number_variants), vtype=gp.GRB.BINARY)
     index_offset = num_variants
 
     # add sub-ILPs for each variant position
@@ -177,11 +180,13 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
 
             start5 = time.time()
             model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)
+            #model = create_sub_ILP(model, G_a, start_v, end_v, delta, index_offset, global_var)
             end5 = time.time()
             total_create_sub_ILP = end5 - start5
             print('\tTime for create_sub_ILP: ', total_create_sub_ILP)
 
             index_offset += len(G_a_pruned.edges())
+            #index_offset += len(G_a.edges())
 
             total_sub_ILP_time = total_reachable_subgraph + total_create_alignment_graph + total_prune_alignment_graph \
                                  + total_create_sub_ILP
@@ -190,7 +195,7 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
 
     # add global objective
     obj = gp.LinExpr(0)
-    for i in range(1, number_variants+1):
+    for i in range(number_variants):
         obj += global_var[i]
     model.setObjective(obj, gp.GRB.MAXIMIZE)
 
