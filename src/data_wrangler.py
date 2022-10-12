@@ -143,6 +143,15 @@ def get_backbone(reference_file_name, chr, start_pos, end_pos):
     return backbone_seq
 
 
+def get_cost_values(pos, ref, alts, greedy_cost_file):
+
+    f = open(greedy_cost_file ,'w')
+    for i, p in enumerate(pos):
+        delta = max([max(len(a), len(ref[i])) for a in alts[i]])
+        f.write(p + ' ' + str(delta) + '\n')
+    f.close()
+
+
 if __name__ == "__main__":
 
     reference_file_name = sys.argv[1]
@@ -154,6 +163,7 @@ if __name__ == "__main__":
     alpha = int(sys.argv[7])
     graph_out_file_name = sys.argv[8]
     pos_substring_file_name = sys.argv[9]
+    greedy_cost_file_name = sys.argv[10]
 
     print('Initial query')
     pos_raw, ref_raw, alts_raw, samples_raw, gt_raw = extract_variants(vcf_file_name, chr, start_pos, end_pos)
@@ -179,3 +189,6 @@ if __name__ == "__main__":
     print('Obtaining graph file')
     construct_graph(backbone_seq, start_pos, end_pos, pos, ref, alts, graph_out_file_name)
 
+    # get delta's for greedy algorithm
+    print('Writing cost file for greedy algorithm')
+    get_cost_values(pos, ref, alts, greedy_cost_file_name)
