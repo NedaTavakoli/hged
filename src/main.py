@@ -52,7 +52,7 @@ def remove_multiedges(G):
         else:
             E_a_no_dup.append(e)
 
-    G_reduced = nx.MultiDiGraph()
+    G_reduced = nx.DiGraph()
     for e in E_a_no_dup:
         G_reduced.add_edge(e[0], e[1], weight=e[2]['weight'], variant=e[2]['variant'])
 
@@ -68,7 +68,7 @@ def prune_alignment_graph(G, start_x, end, delta):
     # keep only vertices reachable from starting vertex with path of weight at most delta
     # and reachable from end in G^R with path of weight at most delta
     # remove edges with weight 0
-    path_lengths_from_front = nx.shortest_path_length(G_no_dup, source=start_x, weight=lambda _, __, d: d[0]['weight'])
+    path_lengths_from_front = nx.shortest_path_length(G_no_dup, source=start_x, weight=lambda _, __, d: d['weight'])
     #path_lengths_from_end = nx.shortest_path_length(G_no_dup.reverse(), source=end, weight=lambda _, __, d: d[0]['weight'])
 
     if path_lengths_from_front['end'] != 0:
@@ -142,6 +142,7 @@ def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
 
 # Takes graph G, location of variants L, alpha, delta, list of samples
 def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
+
 
     start = time.time()
     model = gp.Model()
