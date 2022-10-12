@@ -61,8 +61,6 @@ def obtain_substrings(backbone_seq, start_pos, alpha, pos, sample_alts, pos_subs
     print()
     for i, p in enumerate(pos):
 
-        if i % 10 == 0:
-            print('pos number: ', i)
         string_set = {}
         for tup in sample_alts[p]:
             sample = tup[0]
