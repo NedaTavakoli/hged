@@ -10,7 +10,7 @@ def construct_graph(backbone_seq, start_pos, end_pos, pos, ref, alts, graph_file
         graph_file.write(str(int(start_pos)+i) + ' ' + str(int(start_pos)+i+1) + ' ' + backbone_seq[i] + ' ' + '-' + '\n')
 
     # add alt paths
-    new_vertex = int(end_pos) + 1
+    new_vertex = int(end_pos) + 2
     for i in range(len(pos)):
 
         for a in alts[i]:
@@ -20,13 +20,12 @@ def construct_graph(backbone_seq, start_pos, end_pos, pos, ref, alts, graph_file
 
                 else:
                     start = str(new_vertex)
-                    new_vertex += 1
 
                 if j == len(a)-1:
                     end = str(int(pos[i]) + len(ref[i]))
                 else:
-                    end = str(new_vertex)
                     new_vertex += 1
+                    end = str(new_vertex)
 
                 graph_file.write(start + ' ' + end + ' ' + sym + ' ' + str(i) + '\n')
 
@@ -59,7 +58,11 @@ def obtain_substrings(backbone_seq, start_pos, alpha, pos, sample_alts, pos_subs
     f = open(pos_substring_file_name, 'w')
     final_pos = int(start_pos) + len(backbone_seq)
     start_pos = int(start_pos)
-    for p in pos:
+    print()
+    for i, p in enumerate(pos):
+
+        if i % 10 == 0:
+            print('pos number: ', i)
         string_set = {}
         for tup in sample_alts[p]:
             sample = tup[0]
@@ -67,6 +70,7 @@ def obtain_substrings(backbone_seq, start_pos, alpha, pos, sample_alts, pos_subs
                 if (gt == 0 and tup[1][0] != '0') or (gt == 1 and tup[1][2] != '0'):
 
                     # obtain substring
+                    num_variant_added = 0
                     s = ''
                     current_pos = int(p)
                     while current_pos < final_pos and len(s) < alpha:
@@ -82,9 +86,7 @@ def obtain_substrings(backbone_seq, start_pos, alpha, pos, sample_alts, pos_subs
                                         s += tup2[3].split(',')[alt_choice-1]
                                         current_pos += len(tup2[2]) # add reference length
                                         sample_found_at_pos = True
-                                    else:
-                                        s += backbone_seq[current_pos - start_pos]
-                                        current_pos += 1
+                                        num_variant_added += 1
 
                             if not sample_found_at_pos:
                                 s += backbone_seq[current_pos - start_pos]
@@ -93,9 +95,11 @@ def obtain_substrings(backbone_seq, start_pos, alpha, pos, sample_alts, pos_subs
                             s += backbone_seq[current_pos - start_pos]
                             current_pos += 1
 
+
                     # add to this positions set
                     if s not in string_set:
                         string_set[s] = 1
+
         f.write(p + ' ' + ' '.join(string_set) + '\n')
     f.close()
 
@@ -153,18 +157,27 @@ if __name__ == "__main__":
     graph_out_file_name = sys.argv[8]
     pos_substring_file_name = sys.argv[9]
 
+    print('Initial query')
     pos_raw, ref_raw, alts_raw, samples_raw, gt_raw = extract_variants(vcf_file_name, chr, start_pos, end_pos)
+
+    print('Getting pos, ref, alt')
     pos, ref, alts = construct_pos_ref_alt(pos_raw, ref_raw, alts_raw)
     pos = pos[:max_num_variants]
+    print('Number positions: ', len(pos))
 
+    print('Getting sample table')
     sample_alts = construct_pos_sample_alts(pos_raw, ref_raw, alts_raw, samples_raw, gt_raw, max_num_variants)
 
     # get backbone string
+    print('Getting backbone')
     end_pos = str(int(end_pos) + len(ref[-1]))
     backbone_seq = get_backbone(reference_file_name, chr, start_pos, end_pos)
 
     # write file with pos_substrings
+    print('Obtaining substrings')
     obtain_substrings(backbone_seq, start_pos, alpha, pos, sample_alts, pos_substring_file_name)
 
     # construct graph file
+    print('Obtaining graph file')
     construct_graph(backbone_seq, start_pos, end_pos, pos, ref, alts, graph_out_file_name)
+
