@@ -41,14 +41,19 @@ def create_alignment_graph(G, start_v, S):
 # remove multi-edges, keeping ones with lowest weight
 def remove_multiedges(G):
 
-    E_sorted = sorted(G.edges(data=True), key=lambda tup: (tup[0], tup[1], tup[2]['weight']))
+    E_sorted = sorted(G.edges(data=True), key=lambda edge: (edge[0], edge[1], edge[2]['weight']))
 
     E_a_no_dup = [E_sorted[0]]
+    new_sym = 0
     for i in range(1, len(E_sorted)):
         e_prev = E_sorted[i-1]
         e = E_sorted[i]
         if e_prev[0] == e[0] and e_prev[1] == e[1]:
-            continue
+            e1 = (e[0], e[0] + '.' + str(new_sym), {'weight': e[2]['weight'], 'variant': e[2]['variant']})
+            e2 = (e[0] + '.' + str(new_sym), e[1], {'weight': 0, 'variant': e[2]['variant']})
+            new_sym += 1
+            E_a_no_dup.append(e1)
+            E_a_no_dup.append(e2)
         else:
             E_a_no_dup.append(e)
 
@@ -63,7 +68,6 @@ def prune_alignment_graph(G, start_x, end, delta):
 
     # remove multi-edges keeping the ones with the lowest weight
     G_no_dup = remove_multiedges(G)
-    #G_no_dup = G
 
     # keep only vertices reachable from starting vertex with path of weight at most delta
     # and reachable from end in G^R with path of weight at most delta
@@ -74,24 +78,21 @@ def prune_alignment_graph(G, start_x, end, delta):
     if path_lengths_from_front['end'] != 0:
         return False
 
-    #reachable_from_front = [v for v in path_lengths_from_front if path_lengths_from_front[v] <= delta]
+    reachable_from_front = [v for v in path_lengths_from_front if path_lengths_from_front[v] <= delta]
     #reachable_from_end = [v for v in path_lengths_from_end if path_lengths_from_end[v] <= delta]
 
     # take intersection of the two lists
     #V_a_pruned = list(set(reachable_from_front).intersection(reachable_from_end))
 
     #return nx.induced_subgraph(G_no_dup, V_a_pruned)
-    #return nx.induced_subgraph(G_no_dup, reachable_from_front)
-
-    # pruning is removed
-    return G
+    return nx.induced_subgraph(G_no_dup, reachable_from_front)
 
 
 def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
 
     # add ILP index to edges
     E = G.edges(data=True)
-    G_with_index = nx.MultiDiGraph()
+    G_with_index = nx.DiGraph()
     for i, e in enumerate(E):
         # start, end, weight, variant, ILP-index
         G_with_index.add_edge(e[0], e[1], weight=e[2]['weight'], variant=e[2]['variant'], index=i+index_offset)
@@ -184,7 +185,6 @@ def create_global_ILP(G, locations, substrings, number_variants, alpha, delta):
 
             start5 = time.time()
             model = create_sub_ILP(model, G_a_pruned, start_v, end_v, delta, index_offset, global_var)
-            #model = create_sub_ILP(model, G_a, start_v, end_v, delta, index_offset, global_var)
             end5 = time.time()
             total_create_sub_ILP = end5 - start5
             print('\tTime for create_sub_ILP: ', total_create_sub_ILP)
