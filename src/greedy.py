@@ -1,4 +1,5 @@
 import sys
+import time
 import networkx as nx
 
 
@@ -99,7 +100,11 @@ if __name__ == "__main__":
     G = construct_graph(E)
 
     print('Running Greedy...')
+    start = time.time()
     deleted = greedy(G, locations, costs, alpha, delta, end_of_backbone)
+    end = time.time()
+    total_time = end - start
+    print("Total time:", total_time)
 
     number_variants_deleted = sum([deleted[i] * number_of_variants_at[i] for i in range(len(deleted))])
 
