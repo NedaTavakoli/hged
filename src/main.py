@@ -74,14 +74,17 @@ def prune_alignment_graph(G, start_x, end, delta):
     if path_lengths_from_front['end'] != 0:
         return False
 
-    reachable_from_front = [v for v in path_lengths_from_front if path_lengths_from_front[v] <= delta]
+    #reachable_from_front = [v for v in path_lengths_from_front if path_lengths_from_front[v] <= delta]
     #reachable_from_end = [v for v in path_lengths_from_end if path_lengths_from_end[v] <= delta]
 
     # take intersection of the two lists
     #V_a_pruned = list(set(reachable_from_front).intersection(reachable_from_end))
 
     #return nx.induced_subgraph(G_no_dup, V_a_pruned)
-    return nx.induced_subgraph(G_no_dup, reachable_from_front)
+    #return nx.induced_subgraph(G_no_dup, reachable_from_front)
+
+    # pruning is removed
+    return G
 
 
 def create_sub_ILP(model, G, start_v, end_v, delta, index_offset, global_var):
