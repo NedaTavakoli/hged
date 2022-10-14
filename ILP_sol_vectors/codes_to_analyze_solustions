@@ -1,63 +1,63 @@
  # alpha =50
 
 python src/solution_analyzer.py graph_chr22_10k_50.txt \
-    ILP_sol_vector/ILP_sol_50_1.txt retained_variants_ed_ILP_50_1.txt
+    ILP_sol_vectors/ILP_sol_50_1.txt retained_variants_ed_ILP_50_1.txt
 
 python src/solution_analyzer.py graph_chr22_10k_50.txt \
-    ILP_sol_vector/ILP_sol_50_2.txt retained_variants_ed_ILP_50_2.txt
-
-
-python src/solution_analyzer.py graph_chr22_10k_50.txt \
-    ILP_sol_vector/ILP_sol_50_3.txt retained_variants_ed_ILP_50_3.txt
+    ILP_sol_vectors/ILP_sol_50_2.txt retained_variants_ed_ILP_50_2.txt
 
 
 python src/solution_analyzer.py graph_chr22_10k_50.txt \
-    ILP_sol_vector/ILP_sol_50_5.txt retained_variants_ed_ILP_50_5.txt    
+    ILP_sol_vectors/ILP_sol_50_3.txt retained_variants_ed_ILP_50_3.txt
+
+
+python src/solution_analyzer.py graph_chr22_10k_50.txt \
+    ILP_sol_vectors/ILP_sol_50_5.txt retained_variants_ed_ILP_50_5.txt    
 
 
  # alpha =75
 
 python src/solution_analyzer.py graph_chr22_10k_75.txt \
-    ILP_sol_vector/ILP_sol_75_1.txt retained_variants_ed_ILP_75_1.txt
+    ILP_sol_vectors/ILP_sol_75_1.txt retained_variants_ed_ILP_75_1.txt
 
 python src/solution_analyzer.py graph_chr22_10k_75.txt \
-    ILP_sol_vector/ILP_sol_75_3.txt retained_variants_ed_ILP_75_3.txt
+    ILP_sol_vectors/ILP_sol_75_3.txt retained_variants_ed_ILP_75_3.txt
 
 python src/solution_analyzer.py graph_chr22_10k_75.txt \
-    ILP_sol_vector/ILP_sol_75_4.txt retained_variants_ed_ILP_75_4.txt
+    ILP_sol_vectors/ILP_sol_75_4.txt retained_variants_ed_ILP_75_4.txt
 
 
 python src/solution_analyzer.py graph_chr22_10k_75.txt \
-    ILP_sol_vector/ILP_sol_75_8.txt retained_variants_ed_ILP_75_8.txt
+    ILP_sol_vectors/ILP_sol_75_8.txt retained_variants_ed_ILP_75_8.txt
 
 
  # alpha =100
 
 python src/solution_analyzer.py graph_chr22_10k_100.txt \
-    ILP_sol_vector/ILP_sol_100_1.txt retained_variants_ed_ILP_100_1.txt    
+    ILP_sol_vectors/ILP_sol_100_1.txt retained_variants_ed_ILP_100_1.txt    
 
  python src/solution_analyzer.py graph_chr22_10k_100.txt \
-    ILP_sol_vector/ILP_sol_100_3.txt retained_variants_ed_ILP_100_3.txt    
+    ILP_sol_vectors/ILP_sol_100_3.txt retained_variants_ed_ILP_100_3.txt    
 
  python src/solution_analyzer.py graph_chr22_10k_100.txt \
-    ILP_sol_vector/ILP_sol_100_5.txt retained_variants_ed_ILP_100_5.txt    
+    ILP_sol_vectors/ILP_sol_100_5.txt retained_variants_ed_ILP_100_5.txt    
 
 
  python src/solution_analyzer.py graph_chr22_10k_100.txt \
-    IILP_sol_vector/ILP_sol_100_10.txt retained_variants_ed_ILP_100_10.txt               
+    IILP_sol_vectors/ILP_sol_100_10.txt retained_variants_ed_ILP_100_10.txt               
 
 
  # alpha =150    
 
  python src/solution_analyzer.py graph_chr22_10k_150.txt \
-    ILP_sol_vector/ILP_sol_150_2.txt retained_variants_ed_ILP_150_2.txt 
+    ILP_sol_vectors/ILP_sol_150_2.txt retained_variants_ed_ILP_150_2.txt 
 
  python src/solution_analyzer.py graph_chr22_10k_150.txt \
-    ILP_sol_vector/ILP_sol_150_5.txt retained_variants_ed_ILP_150_5.txt     
+    ILP_sol_vectors/ILP_sol_150_5.txt retained_variants_ed_ILP_150_5.txt     
 
 
  python src/solution_analyzer.py graph_chr22_10k_150.txt \
-    ILP_sol_vector/ILP_sol_150_8.txt retained_variants_ed_ILP_150_8.txt    
+    ILP_sol_vectors/ILP_sol_150_8.txt retained_variants_ed_ILP_150_8.txt    
 
  python src/solution_analyzer.py graph_chr22_10k_150.txt \
-    ILP_sol_vector/ILP_sol_150_15.txt retained_variants_ed_ILP_150_15.txt     
+    ILP_sol_vectors/ILP_sol_150_15.txt retained_variants_ed_ILP_150_15.txt     
