@@ -86,11 +86,11 @@ $FORGe/src/vcf_to_1ksnp.py  --reference $REF --vcf retained_variants_ed_ILP_100_
 $FORGe/src/rank.py --method popcov-blowup --reference $REF --vars ${CHRID}_snp_VF.1ksnp --window-size 100 --output ordered_${CHRID}_snp_VF.txt
 $FORGe/src/build.py --reference  $REF --vars ${CHRID}_snp_VF.1ksnp --window-size 100 --hisat hisat_input_${CHRID}_snp_VF.snp --sorted ordered_${CHRID}_snp_VF.txt --pct 100
 $hisat2/hisat2-build --snp hisat_input_${CHRID}_snp_VF.snp $REF ${CHRID}_hisat_index_hged/chr22_index_hged
-echo "FORGe with pct=100 for VF variants is done"
+echo "FORGe with pct=100 for Hged variants is done"
 
 #map using HISAT2: simulated reads to graph indexes
 $hisat2/hisat2 -f -x ${CHRID}_hisat_index_hged/chr22_index_hged -U reads_${CHRID}_${LEN}.fasta -S hisat_alignment_${CHRID}_snp_hged.sam 
-echo "HISAT2 mapping for VF is done"
+echo "HISAT2 mapping for Hged is done"
 
 
 #map by graph aligner
