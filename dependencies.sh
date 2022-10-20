@@ -122,4 +122,4 @@ num_samples=$(cat samples.txt | wc -l)
 num_haplotypes=$(($num_samples*2))
 echo 'Number of haplotypes:'$num_haplotypes
 cd ${project_dir}
-echo "Looks like it went okay, now run  chmode +x ./scripts/construct_graph.sh && ./scripts/construct_graph.sh ${chr_id} ${alpha}"
+echo "Looks like it went okay, now run  chmod +x ./scripts/construct_graph.sh && ./scripts/construct_graph.sh ${chr_id} ${alpha}"
