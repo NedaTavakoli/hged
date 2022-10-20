@@ -1,7 +1,7 @@
 ## Haplotype_aware Variation Selection in Genome Graphs under Edit Distance
 
 ## Dependencies
-- A C++ compiler with c++11 support, e.g., GNU g++ (version 5+)
+- Python 3
 - [samtools](https://vcftools.github.io/)
 - [bcftools](https://vcftools.github.io/)
 - [Gurobi](https://www.gurobi.com)
@@ -19,12 +19,24 @@ The overall workflow is:
 ```sh
 git clone https://github.com/NedaTavakoli/hged
 cd hged
-project_dir=$(pwd)  #project top-level directory
-chr_id=22 #* change this numbers according to your needs
-alpha=150 #* change this numbers according to your needs
+project_dir=$(pwd)        #project top-level directory
+chr_id=22                 #* change this numbers according to your needs
+alpha=75                 #* change this numbers according to your needs
+delta=3
+start_pos=16050075        #* change this numbers according to your needs; first variant position (here is for chr22)
+end_pos=16654125          #* change this numbers according to your needs; last variant position (here is for chr22)
+total_variants=10000      #* change this numbers according to your needs; total number of variants as your need
 # download data and softwares
 chmod +x dependencies.sh
 ./dependencies.sh ${chr_id} 
+python src/data_wrangler.py data/hs37d5.fa \
+data/chr${chr_id}_snps_indels.vcf.gz ${chr_id} ${start_pos} ${end_pos} ${total_variants} \
+150 graph_chr${chr_id}_${total_variants}_${alpha}.txt pos_substrings_chr${chr_id}_${total_variants}_${alpha}.txt greedy_cost_chr${chr_id}_${total_variants}_${alpha}.txt 
+python src/main.py graph_chr${chr_id}_${total_variants}_${alpha}.txt pos_substrings_chr${chr_id}_${total_variants}_${alpha}.txt ${alpha} ${delta}
+# [optional] to run greedy
+python src/greedy.py graph_chr${chr_id}_${total_variants}_${alpha}.txt pos_substrings_chr${chr_id}_${total_variants}_${alpha}.txt ${alpha} ${delta}
+# To analyze solutions
+python src/solution_analyzer.py graph_chr${chr_id}_${total_variants}_${alpha}.txt ILP_sol_vectors/ILP_sol_${alpha}_${delta}.txt retained_variants_ed_ILP_${alpha}_${delta}.txt
 ```
 
 After a successful compilation, expect executables named as `ilp_snp_indels` in a directory named `build`.
@@ -34,7 +46,7 @@ All the executables implement a variety of algorithms to achieve variant graph s
 ```
 SYNOPSIS
 
-        ilp_snp_indels    -a <alpha> -d <delta>  -chr <id> -vcf <file1>  -fa <file2>  -pos <file3> [-prefix <file4>]
+        main    -a <alpha> -d <delta>  -chr <id> -vcf <file1>  -fa <file2>  -pos <file3> [-prefix <file4>]
 
 
 OPTIONS
