@@ -5,8 +5,7 @@
 - [samtools](https://vcftools.github.io/)
 - [bcftools](https://vcftools.github.io/)
 - [Gurobi](https://www.gurobi.com)
-- [clipp](https://github.com/muellan/clipp)
-- [cxx-prettyprint](https://github.com/louisdx/cxx-prettyprint)
+
 
 ## Installation
 The above dependencies can be handled by running script `dependencies.sh`.
@@ -26,13 +25,6 @@ alpha=150 #* change this numbers according to your needs
 # download data and softwares
 chmod +x dependencies.sh
 ./dependencies.sh ${chr_id} 
-# cosntruct edge_labeled variation graph 
-chmod +x scripts/construct_graph.sh
-./scripts/construct_graph.sh ${chr_id} ${alpha}
-# construct pos and list of substrings of length alpha from halpotypes
-chmod +x scripts/get_POS_substrings.sh 
-./scripts/get_POS_substrings.sh ${chr_id} ${alpha}
-make
 ```
 
 After a successful compilation, expect executables named as `ilp_snp_indels` in a directory named `build`.
@@ -64,10 +56,6 @@ at most delta errors (i.e., edit distance of delta among alpha-long substrings o
 The project has the following folder structure:
 ```
 hged
-|___scripts # scripts to extract data from genome graphs
-|   |___construct_graph.sh # construct complete edge-labeled variation graph
-|   |___get_POS_substrings.sh # construct haplotypes substrings of length alpha for each variant position
-|
 |___src  
     |___get_edges_chr.py # to construct edges of variation graph, used in src/construct_graph.sh
     |___main.py # code to construct ILPs 
