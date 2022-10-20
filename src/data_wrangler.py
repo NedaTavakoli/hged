@@ -34,7 +34,8 @@ def construct_graph(backbone_seq, start_pos, end_pos, pos, ref, alts, graph_file
 
 def extract_variants(vcf_file_name, chr, start_pos, end_pos):
 
-    p1 = subprocess.Popen(['bcftools', 'query',
+    bcftools='/storage/coda1/p-saluru8/0/ntavakoli6/hged/software/bcftools-1.9/bcftools'
+    p1 = subprocess.Popen([bcftools, 'query',
                            '--include', '(TYPE="snp" || TYPE="indel") && GT="alt"',
                            '--regions', chr+':'+start_pos+'-'+end_pos,
                            '--format', '[%POS %REF %ALT %SAMPLE %GT *]', vcf_file_name], stdout=subprocess.PIPE)
@@ -131,7 +132,10 @@ def construct_pos_sample_alts(pos_raw, ref_raw, alts_raw, samples_raw, gt_raw, m
 
 
 def get_backbone(reference_file_name, chr, start_pos, end_pos):
-    p1 = subprocess.Popen(['samtools', 'faidx', reference_file_name, chr + ':' + start_pos + '-' + end_pos],
+
+    samtools='/storage/coda1/p-saluru8/0/ntavakoli6/hged/software//samtools-1.12/samtools'
+    bcftools='/storage/coda1/p-saluru8/0/ntavakoli6/hged/software/bcftools-1.9/bcftools'
+    p1 = subprocess.Popen([samtools, 'faidx', reference_file_name, chr + ':' + start_pos + '-' + end_pos],
                           stdout=subprocess.PIPE)
     stdout = p1.communicate()
     lines = stdout[0].decode("utf-8").split('\n')
